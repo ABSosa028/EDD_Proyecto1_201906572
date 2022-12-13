@@ -393,7 +393,13 @@ class Header {
             this.head = node;
         }else{
             var temp = this.head;
-            while(temp.siguiente != null){
+            if(this.head.getMes() > node.getMes()){
+                this.head = node;
+                node.next = temp;
+                temp.prev = node;
+                return;
+            }
+            while(temp.next != null){
                 if (temp.getMes()> node.getMes()){      
                     temp = temp.prev;
                     var aux = temp.next;
@@ -405,6 +411,9 @@ class Header {
                 }
                 temp = temp.next;
             }
+            temp.next = node;
+            node.prev = temp;
+            return;
         }
 
     }
