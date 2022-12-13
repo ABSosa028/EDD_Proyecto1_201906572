@@ -1,0 +1,69 @@
+.vert{
+    margin-top: 2%;
+}
+
+.fondo{
+    background-color: cadetblue;
+}
+
+.toCard{
+    width: 19rem;
+}
+.toCard:hover{
+    box-shadow: 0 0 50px rgba(130, 114, 114, 0.2); 
+
+}
+.contenido{
+    height:80px;
+    width:10%;
+    float:left;
+    margin: 10px;
+}
+
+.cuadros{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    box-shadow: 0 0 5px rgba(7, 63, 100, 0.832);
+    border-radius: 20px;
+    border: solid 1px;
+    margin-left: 0px;
+    width: 300px;
+    text-align: center;
+}
+.cuadros:hover{
+    box-shadow: 0 0 15px rgba(29, 97, 143, 0.2)
+}
+
+.izquierda{
+    width: 10%;
+}
+
+
+table{
+    margin-left: initial;
+}
+
+.yes{
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+.yes:hover{
+    text-shadow: 0 0 0.8px;
+}
+
+tr:hover{
+    zoom: 1.08;
+
+}
+.siempre{
+    border: rgb(20, 19, 19);
+}
+
+.siempre:hover{
+    
+    box-shadow: 0 0 15px rgb(20, 19, 19);
+}
+
+.ton:hover{
+    box-shadow: 0 0 5px rgb(20, 19, 19);
+}
+
