@@ -21,6 +21,37 @@ class NodoHeader{
 
         this.pos = pos;
     }
+
+    getMes(){
+        switch (this.pos) {
+            case "January":
+                return 1;
+            case "February":
+                return 2;
+            case "March":
+                return 3;
+            case "April":
+                return 4;
+            case "May":
+                return 5;
+            case "June":
+                return 6;
+            case "July":
+                return 7;
+            case "August":
+                return 8;
+            case "September":
+                return 9;
+            case "Octubre":
+                return 10;
+            case "November":
+                return 11;
+            case "December":
+                return 12;
+            default:
+                break;
+        }
+    }
 }
 
 class matrizDisperza{
@@ -356,39 +387,23 @@ class Header {
         }
     }
 
+
     setMes(node){
         if(this.isEmpty()){
-            this.head = node
+            this.head = node;
         }else{
-            var temp = this.head
-            var existe = false
-            while(temp != null){
-                if(temp.pos == node.pos){
-                    existe = true
+            var temp = this.head;
+            while(temp.siguiente != null){
+                if (temp.getMes()> node.getMes()){      
+                    temp = temp.prev;
+                    var aux = temp.next;
+                    temp.next = node;
+                    node.prev = temp;
+                    node.next = aux;
+                    aux.prev = node;
+                    return;
                 }
-                temp = temp.next
-            }
-            if(existe){
-                return;
-            }else{
-                if(node.pos == "january"){
-                    var aux = this.head;
-                    this.head = node;
-                    node.next = aux
-                }else{
-                    if(node.pos == "february"){
-                        if(this.head.pos == "january"){
-                            var aux2 = this.head.next;
-                            this.head.next = node;
-                            node.next = aux2
-                        }else{
-                            var aux3 = this.head;
-                            this.head = node;
-                            node.next = aux3
-                        }
-                    }
-                }
-
+                temp = temp.next;
             }
         }
 
