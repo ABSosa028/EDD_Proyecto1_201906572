@@ -91,10 +91,10 @@ class matrizDisperza{
             }
         }
 
-        let row = this.rowsList.getHeader(x);
+        let row = this.rowsList.getMes(x);
         if (row == null) {
             row = new NodoHeader(x);
-            this.rowsList.setHeader(row);
+            this.rowsList.setMes(row);
             row.access = cell;
         } else if (y < row.access.y) {
             cell.next = row.access;
@@ -360,6 +360,16 @@ class Header {
         return null;
     }
 
+    getMes(mes){
+        let aux = this.head;
+        while(aux != null){
+            if(aux.pos == pos){
+                return aux;
+            }
+            aux = aux.next;
+        }
+    }
+
     setHeader(node) {
         if (this.isEmpty()) {
             this.head = node;
@@ -417,5 +427,7 @@ class Header {
         }
 
     }
+
+
 
 }

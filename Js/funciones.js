@@ -15,21 +15,24 @@ class Usuario{
     }
 }
 
-
 class listaUsuarios{
+
     constructor(){
         this.primero = null;
         this.ultimo = null;
+
     }
 
     agregar(nuevo){
-        if(this.primero = null){
+        if(this.primero == null){
             this.primero = nuevo
             this.ultimo = nuevo
+            return;
         }else{
             var temp = this.ultimo
             this.ultimo = nuevo
             temp.siguiente = nuevo
+            return;
         }
     }
 
@@ -74,6 +77,18 @@ class listaUsuarios{
         }
     }
 
+    mostrarTodo(){
+        var a = "";
+        let temp = this.primero;
+        while(temp != null){
+            a += temp.texto();
+
+            a += "\n\n";
+            temp = temp.siguiente;
+        }
+        return a;
+    }
+
 
 }
 
@@ -89,7 +104,6 @@ class Artista{
 
     texto(){
         var a = this.nombre + " " + this.edad + " " + this.lugar;
-
         return a;
     }
 }
@@ -117,18 +131,17 @@ class Artistas{
     }
     //se puede repetir Artista?
     agregarArtista(nuevo){
-        if(this.primero = null){
+        if(this.primero == null){
             this.primero = nuevo;
         }else{
             //verificar que no existe
             var ok = true;
             var ver = this.primero;
             while(ver != null){
-                if(ver.nombre = nuevo.nombre){
-                    ok = false
+                if(ver.nombre == nuevo.nombre){
+                    ok = false;
                 }
                 ver = ver.siguiente;
-
             }
             if(ok == true){
                 var temp = this.primero;
@@ -137,15 +150,12 @@ class Artistas{
                 }
                 temp.siguiente = nuevo;
                 nuevo.anterior = temp;
-            }else{
-                alert("Artista repetida");
             }
-
+            return;
         }
     }
 
     agregarCancion(nombreArtista, cancion){
-        var agg = false;
         var temp = this.primero;
         while(temp!=null){
             if(temp.nombre == nombreArtista){
@@ -159,14 +169,28 @@ class Artistas{
                     tempCancion.siguiente = cancion;
                     cancion.anterior = tempCancion;
                 }
-                agg = true
-                console.log("agregado")
-            }else{
-                temp = temp.siguiente
+                console.log("agregado");
+                return;
             }
+            temp = temp.siguiente;
         }
-        if(agg == false){
-            console.log("no agregado")
+        console.log("Artista no encontrado");
+    }
+
+    mostrarTodo(){
+        var a = "";
+        var artActual = this.primero;
+        while(artActual != null){
+            console.log(artActual.nombre)
+            console.log("")
+            var canActual = artActual.cabezaCancion;
+            while(canActual != null){
+                console.log(canActual.texto());
+                canActual = canActual.siguiente;
+            }
+            artActual = artActual.siguiente;
+            console.log("");
+            console.log("");
         }
     }
 }
@@ -194,7 +218,39 @@ class NodoHeader{
 
         this.pos = pos;
     }
+
+    getMes(){
+        switch (this.pos) {
+            case "January":
+                return 1;
+            case "February":
+                return 2;
+            case "March":
+                return 3;
+            case "April":
+                return 4;
+            case "May":
+                return 5;
+            case "June":
+                return 6;
+            case "July":
+                return 7;
+            case "August":
+                return 8;
+            case "September":
+                return 9;
+            case "Octubre":
+                return 10;
+            case "November":
+                return 11;
+            case "December":
+                return 12;
+            default:
+                break;
+        }
+    }
 }
+
 class matrizDisperza{
     constructor(){
         this.colsList = null;
@@ -232,10 +288,10 @@ class matrizDisperza{
             }
         }
 
-        let row = this.rowsList.getHeader(x);
+        let row = this.rowsList.getMes(x);
         if (row == null) {
             row = new NodoHeader(x);
-            this.rowsList.setHeader(row);
+            this.rowsList.setMes(row);
             row.access = cell;
         } else if (y < row.access.y) {
             cell.next = row.access;
@@ -501,6 +557,16 @@ class Header {
         return null;
     }
 
+    getMes(mes){
+        let aux = this.head;
+        while(aux != null){
+            if(aux.pos == pos){
+                return aux;
+            }
+            aux = aux.next;
+        }
+    }
+
     setHeader(node) {
         if (this.isEmpty()) {
             this.head = node;
@@ -527,18 +593,52 @@ class Header {
             }
         }
     }
+
+
+    setMes(node){
+        if(this.isEmpty()){
+            this.head = node;
+        }else{
+            var temp = this.head;
+            if(this.head.getMes() > node.getMes()){
+                this.head = node;
+                node.next = temp;
+                temp.prev = node;
+                return;
+            }
+            while(temp.next != null){
+                if (temp.getMes()> node.getMes()){      
+                    temp = temp.prev;
+                    var aux = temp.next;
+                    temp.next = node;
+                    node.prev = temp;
+                    node.next = aux;
+                    aux.prev = node;
+                    return;
+                }
+                temp = temp.next;
+            }
+            temp.next = node;
+            node.prev = temp;
+            return;
+        }
+
+    }
+
+
+
 }
 
 
 
+function iniciar(){
+
+}
 
 
-
-
-
-var users = new listaUsuarios();
-var arts = new Artistas();
-var MusicaProgramada = new matrizDisperza();
+let users = new listaUsuarios();
+let arts = new Artistas();
+const MusicaProgramada = new matrizDisperza();
 
 //login
 try{
@@ -575,7 +675,6 @@ try{
      })
 }catch{
 }
-
 
 
 function mostraruno(){
@@ -615,6 +714,7 @@ function mostrarcuatro(){
 
 
 
+
     
 
 
@@ -632,18 +732,17 @@ function cargarUsuarios(datas){
         for (let index = 0; index < json.length; index++) {
             var element = json[index];
             try{
-                var name = element["name"]
-                var dpi = element["dpi"]
-                var user = element["username"]
-                var pass = element["password"]
-                var phone = element["phone"]
-                var admin = element["admin"]
+                const name = element["name"]
+                const dpi = element["dpi"]
+                const user = element["username"]
+                const pass = element["password"]
+                const phone = element["phone"]
+                const admin = element["admin"]
 
                 if(name == undefined || dpi == undefined || user == undefined || pass == undefined || phone == undefined || admin == undefined){
                     error += 1;
                 }else{
-                    var nuevoUser = new Usuario(user, name, dpi, phone, pass, admin);
-                    console.log(nuevoUser.texto());
+                    let nuevoUser = new Usuario(user, name, dpi, phone, pass, admin);
                     users.agregar(nuevoUser);
                 }
             }catch{
@@ -656,8 +755,7 @@ function cargarUsuarios(datas){
         
     }
     reader.readAsText(datas);
-
-    
+    console.log(users.mostrarTodo())
 
 }
 
@@ -678,8 +776,7 @@ function cargarArtistas(datas){
                 }else{
 
                     var nuevoArt = new Artista(name, age, lugar);
-                    console.log(nuevoArt.texto())
-                    arts.agregarArtista(nuevoArt)
+                    arts.agregarArtista(nuevoArt);
                 }
             }catch{
 
@@ -711,7 +808,6 @@ function cargarCanciones(datas){
                     error += 1;
                 }else{
                     var nuevaCancion = new Cancion(art, name, duration, gender);
-                    console.log(nuevaCancion.texto())
                     arts.agregarCancion(art, nuevaCancion)
                 }
             }catch{
@@ -743,6 +839,7 @@ function cargarMusica(datas){
                 if(artista==undefined || mes == undefined || dia == undefined || cancion == undefined){
                     error += 1;
                 }else{
+
                     var nuevaMusica = new nodoMusica(mes, dia, cancion, artista);
                     console.log(nuevaMusica.texto())
                     //agregar a musicaProgramada
@@ -760,7 +857,6 @@ function cargarMusica(datas){
     reader.readAsText(datas);
 
 }
-
 
 function cargarPodcast(datas){
     var reader = new FileReader();
@@ -793,5 +889,21 @@ function cargarPodcast(datas){
         
     }
     reader.readAsText(datas);
+
+}
+
+function deselectFile(){
+    var a = document.getElementById("fus");
+    var b = document.getElementById("far")
+    var c = document.getElementById("fmp")
+    var d = document.getElementById("fpod")
+    var e = document.getElementById("fcan")
+    a.value = "";
+    b.value = "";
+    c.value = "";
+    d.value = "";
+    e.value = "";
+    console.log(arts.mostrarTodo());
+
 
 }

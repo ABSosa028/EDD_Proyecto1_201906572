@@ -277,10 +277,10 @@
                         <td>
                             <div>
                                 <div id="Lienzouno">
-                                    <form id="unouno">
+
                                       <input accept=".json" onchange="cargarUsuarios(this.files[0])" style="width: 399;" id="fus" name="fus" type="file" class="btn btn-primary btn-sm">
-                                      <button hidden type="submit" class="btn btn-success">cargar</button>
-                                    </form>
+                                      <button onclick="deselectFile()"  class="btn btn-success">cargar</button>
+
                                 </div>
                             </div>
                         </td>
@@ -294,10 +294,10 @@
                     <tr>
                         <td>
                             <div id="lienzoart">
-                                <form id="artistas">
+
                                     <input accept=".json" onchange="cargarArtistas(this.files[0])" style="width: 399;" id="far" name="far" type="file" class="btn btn-secondary btn-sm">
-                                    <button hidden onclick="cargarartistas()" class="btn btn-success">cargar</button>
-                                </form>
+                                    <button  onclick="deselectFile()" class="btn btn-success">cargar</button>
+
                             </div>
                         </td>
                         <td>
@@ -310,10 +310,10 @@
                     <tr>
                         <td>
                             <div id="lienzocan">
-                                <form id="canciones">
+
                                     <input accept=".json" onchange="cargarCanciones(this.files[0])" style="width: 399;" id="fcan" name="fcan" type="file" class="btn btn-primary btn-sm">
-                                    <button hidden class="btn btn-success" onclick="cargarcanciones()">cargar</button>
-                                </form>
+                                    <button  class="btn btn-success" onclick="deselectFile()">cargar</button>
+
                             </div>
                         </td>
                         <td>
@@ -327,10 +327,10 @@
                     <tr>
                         <td>
                             <div id="lienzomusic">
-                                <form id="music">
+
                                     <input accept=".json" onchange="cargarMusica(this.files[0])" style="width: 399; text-align: center;" id="fmp" name="fmp" type="file" class="btn btn-secondary btn-sm">
-                                    <button hidden type="submit" class="btn btn-success">cargar</button>
-                                </form>
+                                    <button onclick="deselectFile()" class="btn btn-success">cargar</button>
+
                             </div>
                         </td>
                         <td>
@@ -344,10 +344,10 @@
                     <tr>
                         <td>
                             <div id="lienzopod">
-                                <form id="podcast">
+
                                     <input accept=".json" onchange="cargarPodcast(this.files[0])" style="width: 399;" id="fpod" name="fpod" type="file" class="btn btn-primary btn-sm">
-                                    <button hidden type="submit" class="btn btn-success">cargar</button>
-                                </form>
+                                    <button  onclick="deselectFile()" class="btn btn-success">cargar</button>
+
                             </div>
                         </td>
                         <td>
