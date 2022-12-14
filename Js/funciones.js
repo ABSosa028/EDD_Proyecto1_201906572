@@ -59,13 +59,14 @@ class listaUsuarios{
         if(user == "" || pass == ""){
             return false;
         }
-        if(this.primero = null){
+        if(this.primero == null){
             return false;
         }else{
             var temp = this.primero;
             while (temp != null){
-                if(temp.usuario == user && pass== temp.contraseña){
+                if(temp.usuario == user && pass == temp.contraseña){
                     if(temp.tipo == tipo){
+                        console.log("simon")
                         return true;
                     }else{
                         return false;
@@ -195,450 +196,277 @@ class Artistas{
     }
 }
 
-class NodoMatriz{
-    constructor(dia, mes, cancion, artista) {
-        this.next = null;
-        this.prev = null;
-        this.up = null;
-        this.down = null;
-
-        this.x = dia;
-        this.y = mes;
-        this.obj = cancion;
-        this.art = artista
+class  NodoMatriz {
+    constructor(valor, x, y, artista) {
+        this.valor = valor;//Valor con el que vamos a comparar
+        this.x = x;//posicion en la cabecera en horizontal
+        this.y = y;//posicion en la cabecera en vertical
+        this.siguiente = null;//enlace para la cabecera en x
+        this.anterior = null;//enlace para la cabera en y
+        this.arriba = null;//enlace para moverse hacia arriba en el nodo matriz
+        this.abajo = null;//enlace para moverse hacia abajo en el nodo matriz
+        this.izquierda = null;//enlace para moverse hacia izquierda en el nodo matriz
+        this.derecha = null;//enlace para moverse hacia derecha en el nodo matriz
+        this.artista = artista
     }
 }
 
-class NodoHeader{
-    constructor(pos) {
-        this.next = null;
-        this.prev = null;
-
-        this.access = null;
-
-        this.pos = pos;
-    }
-
-    getMes(){
-        switch (this.pos) {
-            case "January":
-                return 1;
-            case "February":
-                return 2;
-            case "March":
-                return 3;
-            case "April":
-                return 4;
-            case "May":
-                return 5;
-            case "June":
-                return 6;
-            case "July":
-                return 7;
-            case "August":
-                return 8;
-            case "September":
-                return 9;
-            case "Octubre":
-                return 10;
-            case "November":
-                return 11;
-            case "December":
-                return 12;
-            default:
-                break;
-        }
-    }
-}
-
-class matrizDisperza{
-    constructor(){
-        this.colsList = null;
-        this.rowsList = null;
-    }
-
-    insertar(x, y, obj, art) {
-        let cell = new NodoMatriz(x, y, obj, art);
-
-        let columna = this.colsList.getHeader(y);
-        if (columna == null) {
-            columna = new NodoHeader(y);
-            this.colsList.setHeader(columna);
-            columna.access = cell;
-        } else if (x < columna.access.x) {
-            cell.down = columna.access;
-            columna.access.up = cell;
-            columna.access = cell;
-        } else {
-            let aux = columna.access;
-            while (aux.down != null) {
-                if (x < aux.down.x) {
-                    cell.down = aux.down;
-                    aux.down.up = cell;
-                    aux.down = cell;
-                    cell.up = aux;
-                    break;
-                }
-                aux = aux.down;
-            }
-
-            if (aux.down == null) {
-                aux.down = cell;
-                cell.up = aux;
-            }
-        }
-
-        let row = this.rowsList.getMes(x);
-        if (row == null) {
-            row = new NodoHeader(x);
-            this.rowsList.setMes(row);
-            row.access = cell;
-        } else if (y < row.access.y) {
-            cell.next = row.access;
-            row.access.prev = cell;
-            row.access = cell;
-        } else {
-            let aux = row.access;
-            while (aux.next != null) {
-                if (y < aux.next.y) {
-                    cell.next = aux.next;
-                    aux.next.prev = cell;
-                    aux.next = cell;
-                    cell.prev = aux;
-                    break;
-                }
-                aux = aux.next;
-            }
-
-            if (aux.next == null) {
-                aux.next = cell;
-                cell.up = aux;
-            }
-        }
-    }
-
-    exportRender() {
-        console.log(this.configraph());
-        d3.select("#lienzo").graphviz()
-        .width(900)
-        .height(500)
-        .renderDot(this.configraph())
-    }
-
-
-    configraph() {
-        let xela = "";
-        xela += "digraph G{ node[shape=box style=filled]\n" + "subgraph cluster_p{\n";
-        xela += 'label = "Matriz DISPERSA"' + 'edge[dir = "both"];\n';
-
-        xela += this.nodoX();
-        xela += this.ColbyR();
-        xela += this.nodoY();
-        xela += this.RowsbyR();
-
-
-
-        xela += this.renderNodes();
-
-        xela += this.graphRanks();
-
-
-
-
-        xela += "}}";
-        return xela.toString();
-    }
-
-    nodoX() {
-        let xela = "";
-        let auxc = this.colsList.head;
-        xela += "Mt -> C";
-        xela += auxc.pos;
-        xela += ";\n";
-
-        while (auxc != null) {
-            xela += "C";
-            xela += auxc.pos;
-            xela += "[group =";
-            xela += auxc.pos;
-            xela += ", fillcolor=antiquewhite2 ];\n";
-
-            if (auxc.next != null) {
-                xela += "C";
-                xela += auxc.pos;
-                xela += " -> C";
-                xela += auxc.next.pos;
-                xela += ";\n";
-            }
-            auxc = auxc.next;
-        }
-        auxc = this.colsList.head;
-        xela += "{ rank = same; Mt;";
-
-        while (auxc != null) {
-            xela += "C";
-            xela += auxc.pos;
-            xela += ";";
-
-            auxc = auxc.next;
-        }
-        xela += "}\n";
-
-        return xela.toString();
-    }
-
-    nodoY() {
-        let xela = "";
-
-        let auxr = this.rowsList.head;
-        xela += "Mt -> F";
-        xela += auxr.pos;
-        xela += ";\n";
-
-        while (auxr != null) {
-            xela += "F";
-            xela += auxr.pos;
-
-            xela += "[group=1, fillcolor=antiquewhite2 ];\n";
-
-            if (auxr.next != null) {
-                xela += "F";
-                xela += auxr.pos;
-                xela += " -> F";
-                xela += auxr.next.pos;
-                xela += ";\n";
-            }
-            auxr = auxr.next;
-        }
-        return xela.toString();
-    }
-
-    renderNodes() {
-        let xela = "";
-        let auxc = this.colsList.head;
-        while (auxc != null) {
-            let aux = auxc.access;
-            while (aux != null) {
-                xela += "X";
-                xela += aux.x;
-                xela += "Y";
-                xela += aux.y;
-                xela += '[label="';
-                xela += aux.obj;
-                xela += '", group=';
-                xela += aux.y;
-                xela += "];\n";
-
-                aux = aux.down;
-            }
-            auxc = auxc.next;
-        }
-        return xela.toString();
-    }
-
-    ColbyR() {
-        let xela = "";
-        let xela2 = "";
-        let auxc = this.colsList.head;
-        while (auxc != null) {
-            if (auxc.access != null) {
-                xela += "C";
-                xela += auxc.pos;
-                xela += " -> ";
-                xela += "X";
-                xela += auxc.access.x;
-                xela += "Y";
-                xela += auxc.access.y;
-                xela += ";\n";
-            }
-            let aux = auxc.access;
-            while (aux != null) {
-                if (aux.down != null) {
-                    xela2 += "X";
-                    xela2 += aux.x;
-                    xela2 += "Y";
-                    xela2 += aux.y;
-                    xela2 += " -> ";
-                    xela2 += "X";
-                    xela2 += aux.down.x;
-                    xela2 += "Y";
-                    xela2 += aux.down.y;
-                    xela2 += ";\n";
-                }
-                aux = aux.down;
-            }
-            auxc = auxc.next;
-        }
-        xela += xela2;
-        return xela.toString();
-    }
-
-    RowsbyR() {
-        let xela = "";
-        let xela2 = "";
-        let auxr = this.rowsList.head;
-        while (auxr != null) {
-            if (auxr.access != null) {
-                xela += "F";
-                xela += auxr.pos;
-                xela += " -> ";
-                xela += "X";
-                xela += auxr.access.x;
-                xela += "Y";
-                xela += auxr.access.y;
-                xela += ";\n";
-            }
-            let aux = auxr.access;
-            while (aux != null) {
-                if (aux.next != null) {
-
-                    xela2 += "X";
-                    xela2 += aux.x;
-                    xela2 += "Y";
-                    xela2 += aux.y;
-                    xela2 += " -> ";
-                    xela2 += "X";
-                    xela2 += aux.next.x;
-                    xela2 += "Y";
-                    xela2 += aux.next.y;
-                    xela2 += ";\n";
-                }
-                aux = aux.next;
-            }
-            auxr = auxr.next;
-        }
-        xela += xela2;
-        return xela.toString();
-    }
-
-    graphRanks() {
-        let xela = "";
-        let auxr = this.rowsList.head;
-        while (auxr != null) {
-            xela += "{ rank = same; F";
-            xela += auxr.pos;
-            xela += ";";
-
-            let aux = auxr.access;
-            while (aux != null) {
-                xela += "X";
-                xela += aux.x;
-                xela += "Y";
-                xela += aux.y;
-                xela += ";";
-
-                aux = aux.next;
-            }
-            xela += "}\n";
-
-            auxr = auxr.next;
-        }
-        return xela.toString();
-    }
-
-}
-
-
-class Header {
+class Cabeceras {
     constructor() {
-        this.head = null;
+        this.primero = null;
+        this.ultimo = null;
     }
 
-    isEmpty() {
-        return this.head == null;
-    }
-
-    getHeader(pos) {
-        let aux = this.head;
+    ordenar(nodo) {
+        let aux = this.primero;
         while (aux != null) {
-            if (aux.pos == pos) return aux;
-            aux = aux.next;
+            if (aux.valor < nodo.valor) {
+                aux = aux.siguiente;
+            } else {
+                if (aux == this.primero) {
+                    nodo.siguiente = aux;
+                    aux.anterior = nodo;
+                    this.primero = nodo;
+                    return;
+                } else {
+                    nodo.anterior = aux.anterior;
+                    aux.anterior.siguiente = nodo;
+                    nodo.siguiente = aux;
+                    aux.anterior = nodo;
+                    return;
+                }
+            }
+        }
+        this.ultimo.siguiente = nodo;
+        nodo.anterior = this.ultimo;
+        this.ultimo = nodo;
+    }
+
+    insertar(valor) {
+        let nodo = new  NodoMatriz(valor, null, null, null)
+        if (this.primero == null) {
+            this.primero = this.ultimo = nodo;
+            return;
+        }
+        this.ordenar(nodo);
+    }
+
+    busqueda(valor) {
+        let temp = this.primero;
+        while (temp != null) {
+            if (temp.valor == valor) return temp;
+            temp = temp.siguiente;
         }
         return null;
     }
+}
 
-    getMes(mes){
-        let aux = this.head;
-        while(aux != null){
-            if(aux.pos == pos){
-                return aux;
-            }
-            aux = aux.next;
-        }
+class MatrizD {
+    constructor() {
+        this.lista_horizontal = new Cabeceras();
+        this.lista_vertical = new Cabeceras();
     }
 
-    setHeader(node) {
-        if (this.isEmpty()) {
-            this.head = node;
-        } else if (node.pos < this.head.pos) {
-            node.next = this.head;
-            this.head.prev = node;
-            this.head = node;
+    insertar(valor, x, y, art) {
+        let nodo_x = this.lista_horizontal.busqueda(x);
+        let nodo_y = this.lista_vertical.busqueda(y);
+
+        if (nodo_x == null && nodo_y == null) {
+            this.caso1(valor, x, y, art);
+        } else if (nodo_x == null && nodo_y != null) {
+            this.caso2(valor, x, y);
+        } else if (nodo_x != null && nodo_y == null) {
+            this.caso3(valor, x, y, art);
         } else {
-            let aux = this.head;
-            while (aux.next != null) {
-                if (node.pos < aux.next.pos) {
-                    node.next = aux.next;
-                    aux.next.prev = node;
-                    node.prev = aux;
-                    aux.next = node;
-                    break;
-                }
-                aux = aux.next;
-            }
-
-            if (aux.next == null) {
-                aux.next = node;
-                node.prev = aux;
-            }
+            this.caso4(valor, x, y, art);
         }
     }
 
+    caso1(valor, x, y, art) {
+        this.lista_horizontal.insertar(x);
+        this.lista_vertical.insertar(y);
 
-    setMes(node){
-        if(this.isEmpty()){
-            this.head = node;
-        }else{
-            var temp = this.head;
-            if(this.head.getMes() > node.getMes()){
-                this.head = node;
-                node.next = temp;
-                temp.prev = node;
-                return;
+        let nodo_x = this.lista_horizontal.busqueda(x);
+        let nodo_y = this.lista_vertical.busqueda(y);
+
+        let nuevo = new  NodoMatriz(valor, x, y, art);
+        nodo_x.abajo = nuevo;
+        nuevo.arriba = nodo_x;
+
+        nodo_y.derecha = nuevo;
+        nuevo.izquierda = nodo_y;
+    }
+
+    caso2(valor, x, y, art) {
+        this.lista_horizontal.insertar(x);
+
+        let nodo_x = this.lista_horizontal.busqueda(x);
+        let nodo_y = this.lista_vertical.busqueda(y);
+
+        let agregado = false;
+
+        let nuevo = new  NodoMatriz(valor, x, y, art);
+        let aux = nodo_y.derecha;// nos movemos hacia la derecha una posicion
+        let cabecera = 0;
+
+        while (aux != null) {
+            cabecera = aux.x;
+            if (cabecera < x) { // 3 < 4
+                aux = aux.derecha;
+            } else {
+                nuevo.derecha = aux;//aux toma valor de nodo(2)
+                nuevo.izquierda = aux.izquierda;
+                aux.izquierda.derecha = nuevo;
+                aux.izquierda = nuevo;
+                agregado = true;
+                break;
             }
-            while(temp.next != null){
-                if (temp.getMes()> node.getMes()){      
-                    temp = temp.prev;
-                    var aux = temp.next;
-                    temp.next = node;
-                    node.prev = temp;
-                    node.next = aux;
-                    aux.prev = node;
-                    return;
-                }
-                temp = temp.next;
-            }
-            temp.next = node;
-            node.prev = temp;
-            return;
         }
 
+        if (agregado == false) {
+            aux = nodo_y.derecha;
+            while (aux.derecha != null) {
+                aux = aux.derecha;
+            }
+            nuevo.izquierda = aux;
+            aux.derecha = nuevo;
+        }
+
+        nodo_x.abajo = nuevo;
+        nuevo.arriba = nodo_x;
+    }
+
+    caso3(valor, x, y, art) {
+        // solo existe la cabecera en x
+        this.lista_vertical.insertar(y) // inserta la cabecera en y
+
+        let nodo_x = this.lista_horizontal.busqueda(x);
+        let nodo_y = this.lista_vertical.busqueda(y);
+
+        let agregado = false;
+
+        let nuevo = new  NodoMatriz(valor, x, y, art);//interno de matriz
+        let aux = nodo_x.abajo; // obtenemos el primer nodo de la cabecera
+        let cabecera = 0;
+
+        while (aux != null && !agregado) {
+            cabecera = aux.y;//1
+            if (cabecera < y) {//1<2;2<2;3<2
+                aux = aux.abajo;//aux-> nodo(valor:3, x:2, y:3)
+            } else {
+                nuevo.abajo = aux;
+                nuevo.arriba = aux.arriba;
+                aux.arriba.abajo = nuevo;
+                aux.arriba = nuevo;
+                agregado = true;
+            }
+        }
+
+        if (!agregado) {
+            aux = nodo_x.abajo;
+            while (aux.abajo != null) {
+                aux = aux.abajo;
+            }
+            aux.abajo = nuevo;
+            nuevo.arriba = aux;
+        }
+
+        nodo_y.derecha = nuevo;
+        nuevo.izquierda = nodo_y;
     }
 
 
+    caso4(valor, x, y, art) {
 
+        let nodo_x = this.lista_horizontal.busqueda(x);
+        let nodo_y = this.lista_vertical.busqueda(y);
+
+        let agregado = false;
+        let nuevo = new  NodoMatriz(valor, x, y, art);
+        let aux = nodo_y.derecha;
+        let cabecera = 0;
+        while (aux != null) {
+            cabecera = aux.x;
+            if (cabecera < x) {
+                aux = aux.derecha;
+            } else {
+                nuevo.derecha = aux;
+                nuevo.izquierda = aux.izquierda;
+                aux.izquierda.derecha = nuevo;
+                aux.izquierda = nuevo;
+                agregado = true;
+                break;
+            }
+        }
+        if (agregado == false) {
+            aux = nodo_y.derecha;
+            while (aux.derecha != null) {
+                aux = aux.derecha;
+            }
+            nuevo.izquierda = aux;
+            aux.derecha = nuevo;
+        }
+
+        agregado = false;
+        aux = nodo_x.abajo;
+        cabecera = 0;
+
+        while (aux != null && !agregado) {
+            cabecera = aux.y;
+            if (cabecera < y) {
+                aux = aux.abajo;
+            } else {
+                nuevo.abajo = aux;
+                nuevo.arriba = aux.arriba;
+                aux.arriba.abajo = nuevo;
+                aux.arriba = nuevo;
+                agregado = true;
+            }
+        }
+
+        if (!agregado) {
+            aux = nodo_x.abajo;
+            while (aux.abajo != null) {
+                aux = aux.abajo;
+            }
+            aux.abajo = nuevo;
+            nuevo.arriba = aux;
+        }
+    }
+
+    imprimir_vertical(){
+        let cabecera = this.lista_vertical.primero;
+        let aux;
+        while(cabecera != null){
+            aux = cabecera.derecha;
+            while(aux!=null){
+                console.log("Valor:",aux.valor, "X:", aux.x, "Y:", numMes(aux.y), "artista:", aux.artista);
+                aux = aux.derecha//iteraciones dentro de la matriz;
+            }
+            cabecera = cabecera.siguiente;//iteraciones de lista ordenada
+        }
+    }
+
+    imprimir_horizontal(){
+        let cabecera = this.lista_horizontal.primero;
+        let aux;
+        while(cabecera != null){
+            aux = cabecera.abajo;
+            while(aux!= null){
+                console.log("Valor:",aux.valor, "X:", aux.x, "Y:", numMes(aux.y), "artista:", aux.artista);
+                aux = aux.abajo;
+            }
+            cabecera = cabecera.siguiente;
+        }
+    }
 }
 
 
-
-function iniciar(){
-
-}
 
 
 let users = new listaUsuarios();
 let arts = new Artistas();
-const MusicaProgramada = new matrizDisperza();
+let MusicaProgramada = new MatrizD();
 
 //login
 try{
@@ -654,7 +482,8 @@ try{
                  mostrarcuatro();
              }else{
                  var ok = users.login(formulario.get("user"), formulario.get("pass"), true)
-                 if(ok = true) {
+                 if(ok == true) {
+                    console.log(ok)
                      mostrarcuatro();
                  }else{
                      alert("credenciales incorrectas");
@@ -662,7 +491,8 @@ try{
              }
          }else{
              //user log here
-             var ok = users.login(formulario.get("user"), formulario.get("pass"), false)
+             var ok = false; 
+             ok = users.login(formulario.get("user"), formulario.get("pass"), false);
              if(ok == true){
                  alert("credenciales correctas")
              }else{
@@ -712,10 +542,6 @@ function mostrarcuatro(){
     document.body.style.backgroundColor = "white";
 }
 
-
-
-
-    
 
 
 
@@ -832,18 +658,16 @@ function cargarMusica(datas){
         for (let index = 0; index < json.length; index++) {
             var element = json[index];
             try{
-                var mes = element["month"]
-                var dia = element["day"]
-                var cancion = element["song"]
-                var artista = element["artist"]
+                var mes = element["month"];
+                var dia = element["day"];
+                var cancion = element["song"];
+                var artista = element["artist"];
                 if(artista==undefined || mes == undefined || dia == undefined || cancion == undefined){
                     error += 1;
                 }else{
 
-                    var nuevaMusica = new nodoMusica(mes, dia, cancion, artista);
-                    console.log(nuevaMusica.texto())
-                    //agregar a musicaProgramada
-                    //arts.agregarCancion(nuevaMusica)
+                    MusicaProgramada.insertar(cancion, dia, mesNum(mes), artista);
+
                 }
             }catch{
 
@@ -892,6 +716,69 @@ function cargarPodcast(datas){
 
 }
 
+function mesNum(mes){
+    switch (mes) {
+        case "January":
+            return 1;
+        case "February":
+            return 2;
+        case "March":
+            return 3;
+        case "April":
+            return 4;
+        case "May":
+            return 5;
+        case "June":
+            return 6;
+        case "July":
+            return 7;
+        case "Augost":
+            return 8;
+        case "September":
+            return 9;
+        case "October":
+            return 10;
+        case "November":
+            return 11;
+        case "December":
+            return 12;
+        default:
+            break;
+    }
+}
+
+function numMes(num){
+    switch (num) {
+        case 1:
+            return "January";
+        case 2:
+            return "February";
+        case 3:
+            return "March";
+        case 4:
+            return "April";
+        case 5:
+            return "May";
+        case 6:
+            return "June";
+        case 7:
+            return "July";
+        case 8:
+            return "Augost";
+        case 9:
+            return "September";
+        case 10:
+            return "October";
+        case 11:
+            return "November";
+        case 12: 
+            return "December";
+        default:
+            break;
+    }
+
+}
+
 function deselectFile(){
     var a = document.getElementById("fus");
     var b = document.getElementById("far")
@@ -903,7 +790,9 @@ function deselectFile(){
     c.value = "";
     d.value = "";
     e.value = "";
-    console.log(arts.mostrarTodo());
+    console.log(MusicaProgramada);
+
+
 
 
 }
