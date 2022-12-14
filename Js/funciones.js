@@ -500,7 +500,7 @@ try{
              }
  
          }
- 
+         document.getElementById("formulario").reset();
  
      })
 }catch{
@@ -792,7 +792,25 @@ function deselectFile(){
     e.value = "";
     console.log(MusicaProgramada);
 
+}
 
-
-
+function crearunUsuario(){
+    var usuario = document.getElementById("us").value;
+    var nombre = document.getElementById("name").value;
+    var dpi = document.getElementById("dpy").value;
+    var fone = document.getElementById("fone").value;
+    var pass = document.getElementById("password").value;
+    if (usuario == "" || nombre == "" || dpi == "" || fone == "" || pass == ""){
+        alert("no se puede crear el usuario, hay campos vacios")
+    }else{
+        var nuevoUsuario = new Usuario(usuario, nombre, dpi, fone, pass, false);
+        console.log(nuevoUsuario.texto())
+        users.agregar(nuevoUsuario);
+        alert("usuario creado con exito")
+        document.getElementById("us").value = "";
+        document.getElementById("name").value = "";
+        document.getElementById("dpy").value = "";
+        document.getElementById("fone").value = "";
+        document.getElementById("password").value = "";
+    }
 }

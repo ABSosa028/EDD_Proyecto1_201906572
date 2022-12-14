@@ -79,7 +79,7 @@
             <a class="nav-link"  onclick="mostraruno()">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active"  aria-current="page" onclick="mostardos()">Login</a>
+            <a class="nav-link active"  aria-current="page" onclick="mostrardos()">Login</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" onclick="mostrartres()">Registro</a>
@@ -115,9 +115,8 @@
             <button class="boton" type="submit">Iniciar Sesion</button>
           </center>
           <p></p>
-          <a class="links" href="admon.html">Olvidé mi contraseña</a><br>
-          <a class="links" href="registro.html">Crear cuenta</a>
-          
+          <a class="links" >Olvidé mi contraseña</a><br>
+          <a class="links" onclick="mostrartres()">Crear cuenta</a>
           <br><br>
         </form>
       </div>
@@ -209,9 +208,9 @@
                     <br>
                     <center>
                       
-                      <button class="btn ton" style="background-color: rgb(49, 121, 36);">Registrar</button>
+                      <button onclick="crearunUsuario()" class="btn ton" style="background-color: rgb(49, 121, 36);">Registrar</button>
                  
-                      <button class="btn ton" style="background-color: rgb(181, 20, 20); border: 25px;">Cancelar</button>
+                      <button onclick="mostrardos()" class="btn ton" style="background-color: rgb(181, 20, 20); border: 25px;">Cancelar</button>
                     </center>                  
                   </th>
                 </tr>
