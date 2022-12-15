@@ -1,3 +1,64 @@
+class amigos{
+    constructor(){
+        this.primero = null;
+        this.ultimo = null;
+       
+    }
+
+    push(nuevo){
+        if(this.primero == null){
+            this.primero = nuevo;
+            this.ultimo = nuevo;
+        }else{
+            var temp = this.ultimo;
+            this.ultimo = nuevo;
+            temp.siguiente = nuevo;
+        }
+    }
+
+    pop(){
+        if(this.primero == null){
+            alert("No hay elementos para eliminar");
+        }else{
+            var temp = this.primero;
+            while (temp.siguiente != this.ultimo){
+                temp = temp.siguiente;
+            }
+            temp.siguiente = null;
+            this.ultimo = temp;
+        }
+    }
+}
+
+class bloqueados{
+    constructor(){
+        this.primero = null;
+        this.ultimo = null;
+    }
+
+    encolar(nuevo){
+        if(this.primero == null){
+            this.primero = nuevo;
+            this.ultimo = nuevo;
+        }else{
+            var temp = this.ultimo;
+            this.ultimo = nuevo;
+            temp.siguiente = nuevo;
+        }
+    }
+
+    desencolar(){
+        if(this.primero == null){
+            alert("No hay elementos para eliminar");
+        }else{
+            var temp = this.primero;
+            this.primero = temp.siguiente;
+            temp = null;
+        }
+    }
+}
+
+
 class Usuario{
     constructor(user, name, code, cel, pass, tp ){
         this.usuario = user;
@@ -7,6 +68,8 @@ class Usuario{
         this.contraseña = pass;
         this.tipo = tp;
         this.siguiente = null;
+        this.bloq = new bloqueados();
+        this.amix = new amigos();
     }
     
     texto(){
@@ -813,4 +876,9 @@ function crearunUsuario(){
         document.getElementById("fone").value = "";
         document.getElementById("password").value = "";
     }
+}
+
+
+function aggCanciones(){
+
 }
