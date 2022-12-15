@@ -4,10 +4,23 @@ window.onload = function(){
     console.log(b);
     let c = ""
     a.forEach(element => { 
-        c += "<div class=\"card\">"+element+"</H1>";
+        c +=   "<div class=\"card\">";
+        c +=   "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/750/300?random="+element+"\"></div>";
+        c +=   "<div class=\"card-body\">";
+        c +=   "<h5 class=\"card-title\">Card title</h5>";
+        c +=   "<p class=\"card-text\">Some quick example text to build on the card title and make up the bulk of the card's content.</p>";
+        c +=   "</div>";
+        c +=   "</div>";
+        c +=   "<br>";
+        c +=   "<br>";
+        
+
+
+
+
+
     });
     b.innerHTML = c;
-
 }
 
 

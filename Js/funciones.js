@@ -58,7 +58,6 @@ class bloqueados{
     }
 }
 
-
 class Usuario{
     constructor(user, name, code, cel, pass, tp ){
         this.usuario = user;
@@ -512,6 +511,11 @@ class MatrizD {
 
     imprimir_horizontal(){
         let cabecera = this.lista_horizontal.primero;
+        if(cabecera == null){
+            console.log("No hay canciones");
+            return;
+        }
+        console.log("Cabecera:", cabecera.valor)
         let aux;
         while(cabecera != null){
             aux = cabecera.abajo;
@@ -522,7 +526,105 @@ class MatrizD {
             cabecera = cabecera.siguiente;
         }
     }
+
+    graficar_matriz(){
+        var codigodot = "digraph G{bgcolor=none \n graph[size = \"11.70,6.25\" ]\n   nodesep = 0.6 edge[dir = \"both\"] \nlabel=\" MUSICA PROGRAMADA \";\n node [shape=box];\n node[style=filled];\n";        
+        let hor = this.lista_horizontal.primero;
+        let ver = this.lista_vertical.primero;
+
+        let aux1;
+        let aux2;
+        codigodot = codigodot.concat ("a[label = \"MD\" fillcolor=red];\n");
+        var rank = "{rank = same; a;";
+        while(hor != null){
+            codigodot = codigodot.concat(hor.valor + "[label = \"" + hor.valor + "\" fillcolor=white];\n");
+            rank = rank.concat(hor.valor + ";");
+            hor = hor.siguiente;
+        }
+        rank = rank.concat("}\n");
+        codigodot = codigodot.concat(rank);
+        hor = this.lista_horizontal.primero;
+        codigodot = codigodot.concat ("a ->");
+        while(hor != null){
+            aux1 = hor.siguiente;
+            if(aux1 != null){
+                codigodot = codigodot.concat (hor.valor + "->" + aux1.valor + ";");
+            }
+            hor = hor.siguiente;
+            
+        }
+        codigodot = codigodot.concat("\n");
+        while(ver != null){
+            codigodot = codigodot.concat(numMes(ver.valor) + "[label = \"" + numMes(ver.valor) +"\" fillcolor=pink];\n");
+
+            ver = ver.siguiente;
+            
+        }
+
+        ver = this.lista_vertical.primero;
+        codigodot = codigodot.concat ("a ->");
+        while(ver != null){
+            aux2 = ver.siguiente;
+            if(aux2 != null){
+                codigodot = codigodot.concat (numMes(ver.valor) + "->" + numMes(aux2.valor) + ";");
+            }
+            ver = ver.siguiente;
+        }
+        codigodot = codigodot.concat("\n");
+        
+        
+        ver = this.lista_vertical.primero;
+        while(ver != null){
+            var rank2 = "{rank = same; " + numMes(ver.valor) + ";";
+            aux1 = ver.derecha;
+            codigodot = codigodot.concat(numMes(aux1.y));
+            while(aux1 != null){
+                rank2 = rank2.concat(aux1.valor + ";");
+                codigodot = codigodot.concat("->" + aux1.valor );
+                aux1 = aux1.derecha;
+            }
+            codigodot = codigodot.concat(";\n");
+            rank2 = rank2.concat("}\n");
+            codigodot = codigodot.concat(rank2);
+            ver = ver.siguiente;
+        }
+
+        hor = this.lista_horizontal.primero;
+        while(hor != null){
+            var rank3 = "{rank = same; " + hor.valor + ";";
+            aux1 = hor.abajo;
+            codigodot = codigodot.concat(aux1.x);
+            while(aux1 != null){
+                rank3 = rank3.concat(aux1.valor + ";");
+                codigodot = codigodot.concat("->" + aux1.valor );
+                aux1 = aux1.abajo;
+            }
+            codigodot = codigodot.concat(";\n");
+            rank3 = rank3.concat("}\n");
+            hor = hor.siguiente;
+        }
+
+        /*while(hor != null){
+            aux1 = hor.abajo;
+            while(aux1 != null){
+                codigodot = codigodot.concat(aux1.valor + "->" + hor.valor + ";\n");
+                aux1 = aux1.abajo;
+            }
+            hor = hor.siguiente;
+        }*/
+
+
+
+        
+
+        codigodot = codigodot.concat("\n}");
+        console.log(codigodot);
+        // d3.select("#lienzo3").graphviz()
+        // .renderDot(codigodot)
+    }
+
 }
+
 
 
 
@@ -530,6 +632,11 @@ class MatrizD {
 let users = new listaUsuarios();
 let arts = new Artistas();
 let MusicaProgramada = new MatrizD();
+
+users.agregar(new Usuario("EDD", "Oscar Armin", 2654568452521, 1231234567, "123", true));
+users.agregar(new Usuario("a", "Alan Barillas", 3032428560108, 58624710, "a", false));
+
+
 
 //login
 try{
@@ -541,32 +648,31 @@ try{
          var formulario = new FormData(document.getElementById("formulario"));
          if(formulario.get("admon") != null){
              //admin log here
-             if(formulario.get("user")== "EDD" && formulario.get("pass")== "123"){
-                 mostrarcuatro();
-             }else{
+       
                  var ok = users.login(formulario.get("user"), formulario.get("pass"), true)
                  if(ok == true) {
-                    console.log(ok)
                      mostrarcuatro();
                  }else{
                      alert("credenciales incorrectas");
                  }
-             }
+
          }else{
              //user log here
              var ok = false; 
              ok = users.login(formulario.get("user"), formulario.get("pass"), false);
              if(ok == true){
-                 alert("credenciales correctas")
+                mostrarVistaUsuarios();
              }else{
                  alert("credenciales incorrectas")
              }
  
          }
+         console.log("que")
          document.getElementById("formulario").reset();
  
      })
 }catch{
+    alert("error")
 }
 
 
@@ -575,6 +681,7 @@ function mostraruno(){
     document.getElementById("dos").style.display = "none";
     document.getElementById("tres").style.display = "none";
     document.getElementById("cuatro").style.display = "none";
+    document.getElementById("vistaUsuarios").style.display = "none";
     document.body.style.backgroundColor = "black";
 }
 
@@ -583,7 +690,8 @@ function mostrardos(){
   document.getElementById("dos").style.display = "block";
   document.getElementById("tres").style.display = "none";
   document.getElementById("cuatro").style.display = "none";
-  document.body.style.backgroundColor = "cadetblue";
+    document.getElementById("vistaUsuarios").style.display = "none";
+    document.body.style.backgroundColor = "cadetblue";
 
 }
 
@@ -592,6 +700,7 @@ function mostrartres(){
     document.getElementById("dos").style.display = "none";
     document.getElementById("tres").style.display = "block";
     document.getElementById("cuatro").style.display = "none";
+    document.getElementById("vistaUsuarios").style.display = "none";
     document.body.style.backgroundColor = "cadetblue";
 
 }
@@ -601,12 +710,18 @@ function mostrarcuatro(){
     document.getElementById("dos").style.display = "none";
     document.getElementById("tres").style.display = "none";
     document.getElementById("cuatro").style.display = "block";
-
+    document.getElementById("vistaUsuarios").style.display = "none";
     document.body.style.backgroundColor = "white";
 }
 
-
-
+function mostrarVistaUsuarios(){
+    document.getElementById("uno").style.display = "none";
+    document.getElementById("dos").style.display = "none";
+    document.getElementById("tres").style.display = "none";
+    document.getElementById("cuatro").style.display = "none";
+    document.getElementById("vistaUsuarios").style.display = "block";
+    document.body.style.backgroundColor = "white";
+}
 
 
 //pagina administrador
@@ -795,7 +910,7 @@ function mesNum(mes){
             return 6;
         case "July":
             return 7;
-        case "Augost":
+        case "August":
             return 8;
         case "September":
             return 9;
@@ -853,6 +968,9 @@ function deselectFile(){
     c.value = "";
     d.value = "";
     e.value = "";
+
+
+    console.log(MusicaProgramada.graficar_matriz());
     console.log(MusicaProgramada);
 
 }
