@@ -119,24 +119,23 @@ class listaUsuarios{
 
     login(user, pass, tipo){
         if(user == "" || pass == ""){
-            return false;
+            return null;
         }
         if(this.primero == null){
-            return false;
+            return null;
         }else{
             var temp = this.primero;
             while (temp != null){
                 if(temp.usuario == user && pass == temp.contraseña){
                     if(temp.tipo == tipo){
-                        console.log("simon")
-                        return true;
+                        return temp;
                     }else{
-                        return false;
+                        return null;
                     }
                 }
                 temp = temp.siguiente;
             }
-            return false;
+            return null;
         }
     }
 
@@ -550,15 +549,13 @@ class MatrizD {
             if(aux1 != null){
                 codigodot = codigodot.concat (hor.valor + "->" + aux1.valor + ";");
             }
-            hor = hor.siguiente;
-            
+            hor = hor.siguiente;t     
         }
         codigodot = codigodot.concat("\n");
         while(ver != null){
             codigodot = codigodot.concat(numMes(ver.valor) + "[label = \"" + numMes(ver.valor) +"\" fillcolor=pink];\n");
 
-            ver = ver.siguiente;
-            
+            ver = ver.siguiente; 
         }
 
         ver = this.lista_vertical.primero;
@@ -571,8 +568,7 @@ class MatrizD {
             ver = ver.siguiente;
         }
         codigodot = codigodot.concat("\n");
-        
-        
+                
         ver = this.lista_vertical.primero;
         while(ver != null){
             var rank2 = "{rank = same; " + numMes(ver.valor) + ";";
@@ -583,6 +579,7 @@ class MatrizD {
                 codigodot = codigodot.concat("->" + aux1.valor );
                 aux1 = aux1.derecha;
             }
+            codigodot = codigodot.concat("[constraint=false]");
             codigodot = codigodot.concat(";\n");
             rank2 = rank2.concat("}\n");
             codigodot = codigodot.concat(rank2);
@@ -604,39 +601,21 @@ class MatrizD {
             hor = hor.siguiente;
         }
 
-        /*while(hor != null){
-            aux1 = hor.abajo;
-            while(aux1 != null){
-                codigodot = codigodot.concat(aux1.valor + "->" + hor.valor + ";\n");
-                aux1 = aux1.abajo;
-            }
-            hor = hor.siguiente;
-        }*/
-
-
-
-        
-
         codigodot = codigodot.concat("\n}");
         console.log(codigodot);
+
         // d3.select("#lienzo3").graphviz()
         // .renderDot(codigodot)
     }
-
 }
-
-
-
-
 
 let users = new listaUsuarios();
 let arts = new Artistas();
 let MusicaProgramada = new MatrizD();
+let usuarioLog = null;
 
 users.agregar(new Usuario("EDD", "Oscar Armin", 2654568452521, 1231234567, "123", true));
 users.agregar(new Usuario("a", "Alan Barillas", 3032428560108, 58624710, "a", false));
-
-
 
 //login
 try{
@@ -644,13 +623,16 @@ try{
      var cUs = document.getElementById("vistalog");
      cUs.addEventListener('submit', function(e){
          e.preventDefault();
- 
+         dataArtistas();
+         dataAtt();
+        
          var formulario = new FormData(document.getElementById("formulario"));
          if(formulario.get("admon") != null){
              //admin log here
        
                  var ok = users.login(formulario.get("user"), formulario.get("pass"), true)
-                 if(ok == true) {
+                 if(ok != null) {
+                    usuarioLog = ok;
                      mostrarcuatro();
                  }else{
                      alert("credenciales incorrectas");
@@ -658,16 +640,16 @@ try{
 
          }else{
              //user log here
-             var ok = false; 
+             var ok = null; 
              ok = users.login(formulario.get("user"), formulario.get("pass"), false);
-             if(ok == true){
-                mostrarVistaUsuarios();
+             if(ok != null){
+                usuarioLog = ok;
+                vistaMusica();
              }else{
                  alert("credenciales incorrectas")
              }
  
          }
-         console.log("que")
          document.getElementById("formulario").reset();
  
      })
@@ -675,13 +657,16 @@ try{
     alert("error")
 }
 
-
 function mostraruno(){
     document.getElementById("uno").style.display = "block";
     document.getElementById("dos").style.display = "none";
     document.getElementById("tres").style.display = "none";
     document.getElementById("cuatro").style.display = "none";
-    document.getElementById("vistaUsuarios").style.display = "none";
+    document.getElementById("vistaMusica").style.display = "none";
+    document.getElementById("vistaPlaylist").style.display = "none";
+    document.getElementById("vistaArtistas").style.display = "none";
+    document.getElementById("vistaAmigos").style.display = "none";
+    document.getElementById("vistaBloqueados").style.display = "none";
     document.body.style.backgroundColor = "black";
 }
 
@@ -690,7 +675,11 @@ function mostrardos(){
   document.getElementById("dos").style.display = "block";
   document.getElementById("tres").style.display = "none";
   document.getElementById("cuatro").style.display = "none";
-    document.getElementById("vistaUsuarios").style.display = "none";
+    document.getElementById("vistaMusica").style.display = "none";
+    document.getElementById("vistaPlaylist").style.display = "none";
+    document.getElementById("vistaArtistas").style.display = "none";
+    document.getElementById("vistaAmigos").style.display = "none";
+    document.getElementById("vistaBloqueados").style.display = "none";
     document.body.style.backgroundColor = "cadetblue";
 
 }
@@ -700,7 +689,11 @@ function mostrartres(){
     document.getElementById("dos").style.display = "none";
     document.getElementById("tres").style.display = "block";
     document.getElementById("cuatro").style.display = "none";
-    document.getElementById("vistaUsuarios").style.display = "none";
+    document.getElementById("vistaMusica").style.display = "none";
+    document.getElementById("vistaPlaylist").style.display = "none";
+    document.getElementById("vistaArtistas").style.display = "none";
+    document.getElementById("vistaAmigos").style.display = "none";
+    document.getElementById("vistaBloqueados").style.display = "none";
     document.body.style.backgroundColor = "cadetblue";
 
 }
@@ -710,19 +703,86 @@ function mostrarcuatro(){
     document.getElementById("dos").style.display = "none";
     document.getElementById("tres").style.display = "none";
     document.getElementById("cuatro").style.display = "block";
-    document.getElementById("vistaUsuarios").style.display = "none";
+    document.getElementById("vistaMusica").style.display = "none";
+    document.getElementById("vistaPlaylist").style.display = "none";
+    document.getElementById("vistaArtistas").style.display = "none";
+    document.getElementById("vistaAmigos").style.display = "none";
+    document.getElementById("vistaBloqueados").style.display = "none";
     document.body.style.backgroundColor = "white";
 }
 
-function mostrarVistaUsuarios(){
+function vistaMusica(){
     document.getElementById("uno").style.display = "none";
     document.getElementById("dos").style.display = "none";
     document.getElementById("tres").style.display = "none";
     document.getElementById("cuatro").style.display = "none";
-    document.getElementById("vistaUsuarios").style.display = "block";
+    document.getElementById("vistaMusica").style.display = "block";
+    document.getElementById("vistaPlaylist").style.display = "none";
+    document.getElementById("vistaArtistas").style.display = "none";
+    document.getElementById("vistaAmigos").style.display = "none";
+    document.getElementById("vistaBloqueados").style.display = "none";
+
     document.body.style.backgroundColor = "white";
 }
 
+function vistaArtistas(){
+    document.getElementById("uno").style.display = "none";
+    document.getElementById("dos").style.display = "none";
+    document.getElementById("tres").style.display = "none";
+    document.getElementById("cuatro").style.display = "none";
+    document.getElementById("vistaMusica").style.display = "none";
+    document.getElementById("vistaPlaylist").style.display = "none";
+    document.getElementById("vistaArtistas").style.display = "block";
+    document.getElementById("vistaAmigos").style.display = "none";
+    document.getElementById("vistaBloqueados").style.display = "none";
+
+    document.body.style.backgroundColor = "white";
+
+}
+
+function vistaPlaylist(){
+    document.getElementById("uno").style.display = "none";
+    document.getElementById("dos").style.display = "none";
+    document.getElementById("tres").style.display = "none";
+    document.getElementById("cuatro").style.display = "none";
+    document.getElementById("vistaMusica").style.display = "none";
+    document.getElementById("vistaPlaylist").style.display = "block";
+    document.getElementById("vistaArtistas").style.display = "none";
+    document.getElementById("vistaAmigos").style.display = "none";
+    document.getElementById("vistaBloqueados").style.display = "none";
+
+    document.body.style.backgroundColor = "white";
+}
+
+function vistaAmigos(){
+    dataAmigos();
+    document.getElementById("uno").style.display = "none";
+    document.getElementById("dos").style.display = "none";
+    document.getElementById("tres").style.display = "none";
+    document.getElementById("cuatro").style.display = "none";
+    document.getElementById("vistaMusica").style.display = "none";
+    document.getElementById("vistaPlaylist").style.display = "none";
+    document.getElementById("vistaArtistas").style.display = "none";
+    document.getElementById("vistaAmigos").style.display = "block";
+    document.getElementById("vistaBloqueados").style.display = "none";
+
+    document.body.style.backgroundColor = "white";
+
+}
+
+function vistaBloqueados(){
+    dataBloqueados();
+    document.getElementById("uno").style.display = "none";
+    document.getElementById("dos").style.display = "none";
+    document.getElementById("tres").style.display = "none";
+    document.getElementById("cuatro").style.display = "none";
+    document.getElementById("vistaMusica").style.display = "none";
+    document.getElementById("vistaPlaylist").style.display = "none";
+    document.getElementById("vistaArtistas").style.display = "none";
+    document.getElementById("vistaAmigos").style.display = "none";
+    document.getElementById("vistaBloqueados").style.display = "block";
+    document.body.style.backgroundColor = "white";
+}
 
 //pagina administrador
 function cargarUsuarios(datas){
@@ -997,6 +1057,120 @@ function crearunUsuario(){
 }
 
 
-function aggCanciones(){
+function dataArtistas(){
+    let a = [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+
+    let b = document.getElementById("hola");
+    console.log(b);
+    let c = ""
+    let aux2 = arts.primero;
+    while (aux2 != null){
+        let aux = aux2.cabezaCancion;
+        while (aux != null){
+
+
+        c +=   "<div class=\"card\">";
+        c +=   "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/750/300?random="+a[Math.floor(Math.random() * a.length)]+"\"></div>";
+        c +=   "<div class=\"card-body\">";
+        c +=   "<h5 class=\"card-title\">"+aux.nombre+"</h5>";
+        c +=   "<p class=\"card-text\">"+aux.genero+"</p>";
+        c +=   "<p class=\"card-text\">"+aux2.nombre+"</p>";
+        c +=  "<i class=\"bi bi-play-fill\"></i>"
+
+        c +=   "</div>";
+        c +=   "</div>";
+        c +=   "<br>";
+        c +=   "<br>";
+        aux = aux.siguiente;
+        }
+        aux2 = aux2.siguiente;
+    }
+    b.innerHTML = c;
+    console.log(c)
+}
+
+function dataAtt(){
+    let a = [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+
+    let b = document.getElementById("musicaxart");
+    let c = ""
+    let aux2 = arts.primero;
+
+    while (aux2 != null){
+        let pub = 0;
+        let aux = aux2.cabezaCancion;
+        c+= "<div class = \"card-columns\">";
+        c +=   "<div class=\"card\">";
+            c +=   "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/243/320?random="+a[Math.floor(Math.random() * a.length)]+"\"></div>";
+            c +=   "<div class=\"card-body\">";
+            c +=   "<h5 class=\"card-title\">"+aux2.nombre+"</h5>";
+            c +=   "<h5 class=\"card-title\">"+aux2.edad+"</h5>";
+            c +=   "<p class=\"card-text\">"+aux2.lugar+"</p>";
+            c +=  "<i class=\"bi bi-play-fill\"></i>"
+            c +=   "</div>";
+            c +=   "</div>";
+        
+
+        while (aux != null){
+            pub += 1;
+            c +=   "<div class=\"scroll_horizontal\">";
+            c +=   "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/243/320?random="+a[Math.floor(Math.random() * a.length)]+"\"></div>";
+            c +=   "<div class=\"card-body\">";
+            c +=   "<h5 class=\"card-title\">"+aux.nombre+"</h5>";
+            c +=   "<p class=\"card-text\">"+aux.tiempo+"</p>";
+            c +=   "<p class=\"card-text\">"+aux.artista+"</p>";
+            c +=   "<p class=\"card-text\">"+aux.genero+"</p>";
+            c +=  "<i class=\"bi bi-play-fill\"></i>"
+            c +=   "</div>";
+            c +=   "</div>";
+
+
+            aux = aux.siguiente;
+        }
+        if (pub == 0){
+            c +=   "<div class=\"scroll_horizontal\">";
+            c +=   "<div class=\"card-img-top\"><br><img ></div>";
+            c +=   "<div class=\"card-body\">";
+            c +=   "<h5 class=\"card-title\"> Sin Canciones </h5>";
+            c +=  "<i class=\"bi bi-play-fill\"></i>"
+            c +=   "</div>";
+            c +=   "</div>";
+        }
+        c+= "</div>";
+        c+= "<br>";
+        c+= "<br>";
+        aux2 = aux2.siguiente;
+
+    }
+    b.innerHTML = c;
+    console.log(c)
+}
+
+function dataAmigos(){
 
 }
+
+function dataBloqueados(){
+
+}
+
+
+/*
+        a.forEach(element => { 
+            c +=   "<div class=\"card\">";
+            c +=   "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/750/300?random="+element+"\"></div>";
+            c +=   "<div class=\"card-body\">";
+            c +=   "<h5 class=\"card-title\">Card title</h5>";
+            c +=   "<p class=\"card-text\">Some quick example text to build on the card title and make up the bulk of the card's content.</p>";
+            c +=   "</div>";
+            c +=   "</div>";
+            c +=   "<br>";
+            c +=   "<br>";
+
+    });
+    b.innerHTML = c;
+}
+
+
+
+}*/

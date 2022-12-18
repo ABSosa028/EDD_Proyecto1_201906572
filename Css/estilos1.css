@@ -162,3 +162,18 @@ td{
 }
 
 
+
+
+div.scroll_horizontal {
+	width: 400px;
+	overflow: auto;
+	border: 1px solid #666;
+	background-color: #ccc;
+	padding: 8px;
+}
+
+#div1 {
+    width: 2000px;
+    height: 100px;
+    
+}
