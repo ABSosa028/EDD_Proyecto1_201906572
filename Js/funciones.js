@@ -1,3 +1,11 @@
+class amigo{
+    constructor(user){
+        this.cual = user;
+        this.next = null;
+    }
+}
+
+
 class amigos{
     constructor(){
         this.primero = null;
@@ -12,7 +20,7 @@ class amigos{
         }else{
             var temp = this.ultimo;
             this.ultimo = nuevo;
-            temp.siguiente = nuevo;
+            temp.next = nuevo;
         }
     }
 
@@ -26,43 +34,109 @@ class amigos{
                 return;
             }
             var temp = this.primero;
-            while (temp.siguiente != this.ultimo){
-                temp = temp.siguiente;
+            while (temp.next != this.ultimo){
+                temp = temp.next;
             }
-            temp.siguiente = null;
+            temp.next = null;
             this.ultimo = temp;
         }
     }
 
     buscarAmigo(user){
+        //busqueda por nombre
         if(this.primero == null){
             return false;
         }else{
             var temp = this.primero;
             while (temp != null){
-                if(temp.usuario == user){
+                if(temp.cual.usuario == user){
                     return true;
                 }
-                temp = temp.siguiente;
+                temp = temp.next;
             }
             return false;
         }
     }
 
     buscarAmigo2(user){
+        //busqueda por objeto
         if(this.primero == null){
             return false;
         }else{
             var temp = this.primero;
             while (temp != null){
-                if(temp == user){
+                if(temp.cual == user){
                     return true;
                 }
-                temp = temp.siguiente;
+                temp = temp.next;
             }
             return false;
         }
     }
+}
+
+class playList{
+    constructor(){
+        this.primero = null;
+        this.ultimo = null;
+    }
+
+    push(nuevo){
+        if(this.primero == null){
+            this.primero = nuevo;
+            this.ultimo = nuevo;
+            
+        }else{
+            var temp = this.ultimo;
+            this.ultimo = nuevo;
+            temp.siguiente = nuevo;
+            nuevo.anterior = temp;
+            this.primero.anterior = nuevo;
+            nuevo.siguiente = this.primero;
+        }
+    }
+
+    eliminarBusqueda(cancion){
+        if(this.primero == null){
+            alert("No hay elementos para eliminar");
+        }else{
+            var temp = this.primero;
+            while (temp != null){
+                if(temp.cancion == cancion){
+                    if(temp == this.primero){
+                        this.primero = temp.siguiente;
+                        this.ultimo.siguiente = this.primero;
+                        this.primero.anterior = this.ultimo;
+                        temp = null;
+                        return;
+                    }else if(temp == this.ultimo){
+                        this.ultimo = temp.anterior;
+                        this.primero.anterior = this.ultimo;
+                        this.ultimo.siguiente = this.primero;
+                        temp = null;
+                        return;
+                    }else{
+                        temp.anterior.siguiente = temp.siguiente;
+                        temp.siguiente.anterior = temp.anterior;
+                        temp = null;
+                        return;
+                    }
+                }
+                temp = temp.siguiente;
+            }
+            alert("No se encontro la cancion");
+        }
+    }
+
+}
+
+class nodoPlay{
+    constructor(canncion){
+        this.cancion = canncion;
+        this.siguiente = null;
+        this.anterior = null;
+    }
+
 }
 
 class bloqueados{
@@ -91,6 +165,28 @@ class bloqueados{
             temp = null;
         }
     }
+
+    buscarBloqueado(user){
+        if(this.primero == null){
+            return false;
+        }else{
+            var temp = this.primero;
+            while (temp != null){
+                if(temp.cual == user){
+                    return true;
+                }
+                temp = temp.siguiente;
+            }
+            return false;
+        }
+    }
+}
+
+class bloqueado{
+    constructor(user){
+        this.cual = user;
+        this.siguiente = null;
+    }
 }
 
 class Usuario{
@@ -104,6 +200,8 @@ class Usuario{
         this.siguiente = null;
         this.bloq = new bloqueados();
         this.amix = new amigos();
+        this.myplay = new playList();
+
     }
     
     texto(){
@@ -113,7 +211,6 @@ class Usuario{
 }
 
 class listaUsuarios{
-
     constructor(){
         this.primero = null;
         this.ultimo = null;
@@ -222,12 +319,12 @@ class Artista{
 
 class Cancion{
     constructor(artista, name, duration, gender){
-        this.artista = artista
-        this.nombre = name
-        this.tiempo = duration
-        this.genero = gender
-        this.siguiente = null
-        this.anterior = null
+        this.artista = artista;
+        this.nombre = name;
+        this.tiempo = duration;
+        this.genero = gender;
+        this.siguiente = null;
+        this.anterior = null;
     }
 
     texto(){
@@ -303,6 +400,40 @@ class Artistas{
             console.log("");
         }
     }
+
+    getCancion(nombreCancion, nombreArtista){
+        var temp = this.primero;
+        while(temp!=null){
+            if(temp.nombre == nombreArtista){
+                var tempCancion = temp.cabezaCancion;
+                while(tempCancion != null){
+                    if(tempCancion.nombre == nombreCancion){
+                        return tempCancion;
+                    }
+                    tempCancion = tempCancion.siguiente;
+                }
+            }
+            temp = temp.siguiente;
+        }
+        return null;
+    }
+
+    ordenamientoBurbujaArtistas(){
+        var temp = this.primero;
+        while(temp != null){
+            var temp2 = temp.siguiente;
+            while(temp2 != null){
+                if(letratoNum(temp.nombre[0]) > letratoNum(temp2.nombre[0])){
+                    var aux = temp;
+                    temp = temp2;
+                    temp2 = aux;
+                }
+                temp2 = temp2.siguiente;
+            }
+            temp = temp.siguiente;
+        }
+    }
+
 }
 
 class  NodoMatriz {
@@ -656,15 +787,60 @@ class MatrizD {
     }
 }
 
+class PodCast{
+    constructor(nombre, duracion, invitados, tema){
+        this.nombre = nombre;
+        this.duracion = duracion;
+        this.invitados = invitados;
+        this.tema = tema;
+        this.izq = null;
+        this.der = null;
+    }
+}
+
+class PodCasts{
+    constructor(){
+        this.raiz = null;
+    }
+
+    agregar(nuevo){
+        if(this.raiz == null){
+            this.raiz = nuevo;
+        }else{
+            this.agregarNodo(this.raiz, nuevo);
+        }
+    }
+
+    agregarNodo(raiz, nuevo){
+        if(raiz.duracion > nuevo.duracion){
+            if(raiz.izq == null){
+                raiz.izq = nuevo;
+            }else{
+                this.agregarNodo(raiz.izq, nuevo);
+            }
+        }else{
+            if(raiz.der == null){
+                raiz.der = nuevo;
+            }else{
+                this.agregarNodo(raiz.der, nuevo);
+            }
+        }
+    }
+
+}
+
+
+//declaracion de variables globales
 let users = new listaUsuarios();
 let arts = new Artistas();
 let MusicaProgramada = new MatrizD();
 let usuarioLog = null;
 
+//quemado de usuarios masters
 users.agregar(new Usuario("EDD", "Oscar Armin", 2654568452521, 1231234567, "123", true));
 users.agregar(new Usuario("a", "Alan Barillas", 3032428560108, 58624710, "a", false));
 
-//login
+//metodo de logueo
 try{
      //login
      var cUs = document.getElementById("vistalog");
@@ -703,7 +879,7 @@ try{
 }catch{
     alert("error")
 }
-
+//mostrar contenedor con vista de home
 function mostraruno(){
     document.getElementById("uno").style.display = "block";
     document.getElementById("dos").style.display = "none";
@@ -714,9 +890,10 @@ function mostraruno(){
     document.getElementById("vistaArtistas").style.display = "none";
     document.getElementById("vistaAmigos").style.display = "none";
     document.getElementById("vistaBloqueados").style.display = "none";
+    document.getElementById("vistaPodcast").style.display = "none";
     document.body.style.backgroundColor = "black";
 }
-
+//mostrar contenedor con vista de login
 function mostrardos(){
   document.getElementById("uno").style.display = "none";
   document.getElementById("dos").style.display = "block";
@@ -727,10 +904,11 @@ function mostrardos(){
     document.getElementById("vistaArtistas").style.display = "none";
     document.getElementById("vistaAmigos").style.display = "none";
     document.getElementById("vistaBloqueados").style.display = "none";
+    document.getElementById("vistaPodcast").style.display = "none";
     document.body.style.backgroundColor = "cadetblue";
 
 }
-
+//mostrar contenedor con vista de registro
 function mostrartres(){
     document.getElementById("uno").style.display = "none";
     document.getElementById("dos").style.display = "none";
@@ -741,10 +919,11 @@ function mostrartres(){
     document.getElementById("vistaArtistas").style.display = "none";
     document.getElementById("vistaAmigos").style.display = "none";
     document.getElementById("vistaBloqueados").style.display = "none";
+    document.getElementById("vistaPodcast").style.display = "none";
     document.body.style.backgroundColor = "cadetblue";
 
 }
-
+//mostrar contenedor con vista administrador
 function mostrarcuatro(){
     document.getElementById("uno").style.display = "none";
     document.getElementById("dos").style.display = "none";
@@ -755,9 +934,10 @@ function mostrarcuatro(){
     document.getElementById("vistaArtistas").style.display = "none";
     document.getElementById("vistaAmigos").style.display = "none";
     document.getElementById("vistaBloqueados").style.display = "none";
+    document.getElementById("vistaPodcast").style.display = "none";
     document.body.style.backgroundColor = "white";
 }
-
+//mostrar contenedor con vista de musica
 function vistaMusica(){
     document.getElementById("uno").style.display = "none";
     document.getElementById("dos").style.display = "none";
@@ -768,10 +948,10 @@ function vistaMusica(){
     document.getElementById("vistaArtistas").style.display = "none";
     document.getElementById("vistaAmigos").style.display = "none";
     document.getElementById("vistaBloqueados").style.display = "none";
-
+    document.getElementById("vistaPodcast").style.display = "none";
     document.body.style.backgroundColor = "white";
 }
-
+//mostrar contenedor con vista de artistas
 function vistaArtistas(){
     document.getElementById("uno").style.display = "none";
     document.getElementById("dos").style.display = "none";
@@ -782,12 +962,13 @@ function vistaArtistas(){
     document.getElementById("vistaArtistas").style.display = "block";
     document.getElementById("vistaAmigos").style.display = "none";
     document.getElementById("vistaBloqueados").style.display = "none";
-
+    document.getElementById("vistaPodcast").style.display = "none";
     document.body.style.backgroundColor = "white";
 
 }
-
+//mostrar contenedor con vista de playlist
 function vistaPlaylist(){
+    dataPlay();
     document.getElementById("uno").style.display = "none";
     document.getElementById("dos").style.display = "none";
     document.getElementById("tres").style.display = "none";
@@ -797,10 +978,10 @@ function vistaPlaylist(){
     document.getElementById("vistaArtistas").style.display = "none";
     document.getElementById("vistaAmigos").style.display = "none";
     document.getElementById("vistaBloqueados").style.display = "none";
-
+    document.getElementById("vistaPodcast").style.display = "none";
     document.body.style.backgroundColor = "white";
 }
-
+//mostrar contenedor con vista de amigos
 function vistaAmigos(){
     dataUsuarios();
     dataAmigos();
@@ -813,11 +994,12 @@ function vistaAmigos(){
     document.getElementById("vistaArtistas").style.display = "none";
     document.getElementById("vistaAmigos").style.display = "block";
     document.getElementById("vistaBloqueados").style.display = "none";
-
+    document.getElementById("vistaPodcast").style.display = "none";
     document.body.style.backgroundColor = "white";
 
 }
 
+//mostrar contenedor con vista de bloqueados
 function vistaBloqueados(){
     dataBloqueados();
     document.getElementById("uno").style.display = "none";
@@ -829,10 +1011,29 @@ function vistaBloqueados(){
     document.getElementById("vistaArtistas").style.display = "none";
     document.getElementById("vistaAmigos").style.display = "none";
     document.getElementById("vistaBloqueados").style.display = "block";
+    document.getElementById("vistaPodcast").style.display = "none";
+    document.body.style.backgroundColor = "white";
+}
+
+function vistaPodcast(){
+    //dataBloqueados();
+    document.getElementById("uno").style.display = "none";
+    document.getElementById("dos").style.display = "none";
+    document.getElementById("tres").style.display = "none";
+    document.getElementById("cuatro").style.display = "none";
+    document.getElementById("vistaMusica").style.display = "none";
+    document.getElementById("vistaPlaylist").style.display = "none";
+    document.getElementById("vistaArtistas").style.display = "none";
+    document.getElementById("vistaAmigos").style.display = "none";
+    document.getElementById("vistaBloqueados").style.display = "none";
+    document.getElementById("vistaPodcast").style.display = "block";
+
     document.body.style.backgroundColor = "white";
 }
 
 //pagina administrador
+
+//cargar usuarios
 function cargarUsuarios(datas){
 
     var reader = new FileReader();
@@ -870,7 +1071,7 @@ function cargarUsuarios(datas){
 
 
 }
-
+//cargar artistas
 function cargarArtistas(datas){
     var reader = new FileReader();
     reader.onload = function(e){
@@ -902,7 +1103,7 @@ function cargarArtistas(datas){
     reader.readAsText(datas);
 
 }
-
+//cargar canciones
 function cargarCanciones(datas){
     var reader = new FileReader();
     reader.onload = function(e){
@@ -934,7 +1135,7 @@ function cargarCanciones(datas){
     reader.readAsText(datas);
 
 }
-
+//funcion para cargar la musica programada
 function cargarMusica(datas){
     var reader = new FileReader();
     reader.onload = function(e){
@@ -967,7 +1168,7 @@ function cargarMusica(datas){
     reader.readAsText(datas);
 
 }
-
+//funcion para cargar el archivo de podcast
 function cargarPodcast(datas){
     var reader = new FileReader();
     reader.onload = function(e){
@@ -1002,6 +1203,7 @@ function cargarPodcast(datas){
 
 }
 
+//funcion para convertir el nombre del mes a su numero
 function mesNum(mes){
     switch (mes) {
         case "January":
@@ -1033,6 +1235,7 @@ function mesNum(mes){
     }
 }
 
+//funcion para convertir el numero del mes a su nombre
 function numMes(num){
     switch (num) {
         case 1:
@@ -1065,6 +1268,7 @@ function numMes(num){
 
 }
 
+//deseleccionar los archivos de los input file
 function deselectFile(){
     var a = document.getElementById("fus");
     var b = document.getElementById("far")
@@ -1079,6 +1283,7 @@ function deselectFile(){
 
 }
 
+//registro de un usuario
 function crearunUsuario(){
     var usuario = document.getElementById("us").value;
     var nombre = document.getElementById("name").value;
@@ -1099,7 +1304,7 @@ function crearunUsuario(){
     }
 }
 
-
+//mostrar toda la musica falta
 function dataArtistas(){
     let a = [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
 
@@ -1117,7 +1322,8 @@ function dataArtistas(){
         c +=   "<h5 class=\"card-title\">"+aux.nombre+"</h5>";
         c +=   "<p class=\"card-text\">"+aux.genero+"</p>";
         c +=   "<p class=\"card-text\">"+aux2.nombre+"</p>";
-        c +=  "<i class=\"bi bi-play-fill\"></i>"
+        c +=   "<button type=\"button\" class=\"btn btn-primary\" onclick=\"nuevoPlay('"+aux.nombre+"','"+aux2.nombre+"')\">Añadir PlayList</button>";
+
 
         c +=   "</div>";
         c +=   "</div>";
@@ -1131,6 +1337,7 @@ function dataArtistas(){
 
 }
 
+//mostrar musica por artistas listo
 function dataAtt(){
     let a = [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
 
@@ -1186,29 +1393,29 @@ function dataAtt(){
 
 }
 
-
-
+//mostrar usuarios listo
 function dataUsuarios(){
     //vistadetodos
     let a = [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
     let b = document.getElementById("vistadetodos");
     let c = ""
     let aux = users.primero;
-
         c += "<center>"
         c += "<h1>Usuarios</h1>"
         c += "</center>"
         c += "<div class = \"grid-container\">";
         while (aux != null){
             if(aux != usuarioLog){
-                let amigaso = usuarioLog.amix.buscarAmigo(aux);
-                if(amigaso == false){
+                let amigaso = usuarioLog.amix.buscarAmigo2(aux);
+                let bloqueo = usuarioLog.bloq.buscarBloqueado(aux);
+                if(amigaso == false && bloqueo == false ){
                     c +=   "<div class=\"grid-item card\">";
                     c +=   "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/180/320?random="+a[Math.floor(Math.random() * a.length)]+"\"></div>";
                     c +=   "<div class=\"card-body\">";
                     c +=   "<h5 class=\"card-title\">"+aux.nombre+"</h5>";
                     c +=   "<p class=\"card-text\"><h6>"+aux.usuario+"</h6></p>";
                     c +=   "<button type=\"button\" class=\"btn btn-primary\" onclick=\"añadir('"+aux.usuario+"')\">Añadir</button>"
+                    c +=   "<button type=\"button\" class=\"btn btn-danger\" onclick=\"bloquear('"+aux.usuario+"')\">Bloquear</button>"
                     c +=   "</div>";
                     c +=   "</div>";
                 }
@@ -1222,7 +1429,7 @@ function dataUsuarios(){
 
 
 }
-
+//mostrar amigos listo
 function dataAmigos(){
     //vistadetodos
     let a = [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
@@ -1235,12 +1442,42 @@ function dataAmigos(){
     c += "</center>"
     c += "<div class = \"grid-container\">";
     while (aux != null){
-        if(aux != usuarioLog){
+        if(aux.cual != usuarioLog){
                 c +=   "<div class=\"grid-item card\">";
                 c +=   "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/180/320?random="+a[Math.floor(Math.random() * a.length)]+"\"></div>";
                 c +=   "<div class=\"card-body\">";
-                c +=   "<h5 class=\"card-title\">"+aux.nombre+"</h5>";
-                c +=   "<p class=\"card-text\"><h6>"+aux.usuario+"</h6></p>";
+                c +=   "<h5 class=\"card-title\">"+aux.cual.nombre+"</h5>";
+                c +=   "<p class=\"card-text\"><h6>"+aux.cual.usuario+"</h6></p>";
+                c +=   "</div>";
+                c +=   "</div>";
+        }
+        aux = aux.next;
+    }
+    c+= "</div>";
+    c+= "<br>";
+    c+= "<br>";
+    b.innerHTML = c;
+
+}
+
+//añadir a vista de bloqueados
+function dataBloqueados(){
+    let a = [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+
+    let b = document.getElementById("bloqueox2");
+    let c = ""
+    let aux = usuarioLog.bloq.primero;
+    c += "<center>"
+    c += "<h1>Usuarios Bloqueados</h1>"
+    c += "</center>"
+    c += "<div class = \"grid-container\">";
+    while (aux != null){
+        if(aux.cual != usuarioLog){
+                c +=   "<div class=\"grid-item card\">";
+                c +=   "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/180/320?random="+a[Math.floor(Math.random() * a.length)]+"\"></div>";
+                c +=   "<div class=\"card-body\">";
+                c +=   "<h5 class=\"card-title\">"+aux.cual.nombre+"</h5>";
+                c +=   "<p class=\"card-text\"><h6>"+aux.cual.usuario+"</h6></p>";
                 c +=   "</div>";
                 c +=   "</div>";
         }
@@ -1253,19 +1490,66 @@ function dataAmigos(){
 
 }
 
+function dataPlay(){
+    let a = [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
 
-function dataBloqueados(){
+    let b = document.getElementById("vistadetuplay");
+    let c = ""
+    let aux = usuarioLog.myplay.primero;
+    c += "<center>"
+    c += "<h1>Mi PlayList</h1>"
+    c += "</center>"
+    c += "<div id = \"carouselExampleControls\" class=\"carousel slide\" data-ride=\"carousel\">";
+    c += "<div class=\"carousel-inner\">";
+    if (aux != null){
+        c += "<div class=\"carousel-item active\">";
+        c += "<img class = \"d-block w-100\" src=\"https://picsum.photos/1440/974?random="+a[Math.floor(Math.random() * a.length)]+"\">";
+        c += "<p>"+aux.cancion.nombre+"</p>";
+        c += "<p>"+aux.cancion.tiempo+"</p>";
+        c += "</div>"
+        aux = aux.siguiente;
+    }else{
+        c += "<div class=\"carousel-item active\">";
+       
+        c += "<p style=\"color=\"Red\"; \"><h1>Playlist Vacia</h1></p>";
+        c += "</div>";
+    }
+    while (aux != null && aux != usuarioLog.myplay.primero){
+        c += "<div class=\"carousel-item \">";
+        c += "<img class = \"d-block w-100 card\" src=\"https://picsum.photos/1440/974?random="+a[Math.floor(Math.random() * a.length)]+"\">";
+        c += "<p>"+aux.cancion.nombre+"</p>";
+        c += "<p>"+aux.cancion.tiempo+"</p>";
+        c += "</div>"
+        aux = aux.siguiente;
+    }
+    c+= "</div>";
+    c+= "<a class=\"carousel-control-prev\" href=\"#carouselExampleControls\" role=\"button\" data-slide=\"prev\">";
+    c+= "<span class=\"carousel-control-prev-icon\" aria-hidden=\"true\"></span>";
+    c+= "<span class=\"sr-only\">Previous</span>";
+    c+= "</a>";
+    c+= "<a class=\"carousel-control-next\" href=\"#carouselExampleControls\" role=\"button\" data-slide=\"next\">";
+    c+= "<span class=\"carousel-control-next-icon\" aria-hidden=\"true\"></span>";
+    c+= "<span class=\"sr-only\">Next</span>";
+    c+= "</a>";
+    c+= "</div>";
+    c+= "<br>";
+    c+= "<br>";
+    b.innerHTML = c;
 
 }
 
+function dataPodcast(){
+}
 
+
+//añadir un amigo listo
 function añadir(aux){
 
     let nuevoAmigo = users.buscarUsuario(aux);
     if (nuevoAmigo != null){
         let existe = usuarioLog.amix.buscarAmigo2(nuevoAmigo);
         if (existe == false){
-            usuarioLog.amix.push(nuevoAmigo);
+            usuarioLog.amix.push(new amigo(nuevoAmigo));
         }else{
             alert("Ya es tu amigo")
         }
@@ -1273,27 +1557,120 @@ function añadir(aux){
     vistaAmigos();
 }
 
+//bloquear un usuario listo
+function bloquear(aux){
+    let nuevoBloqueado = users.buscarUsuario(aux);
+    if (nuevoBloqueado != null){
+        let existe = usuarioLog.bloq.buscarBloqueado(nuevoBloqueado);
+        if (existe == false){
+            usuarioLog.bloq.encolar(new bloqueado(nuevoBloqueado));
+        }else{
+            alert("Ya lo tienes bloqueado")
+        }
+    }
+    vistaAmigos();
+}
 
+//eliminar un amigo listo
 function deleteFriend(){
     usuarioLog.amix.pop();
     vistaAmigos();
 }
-/*
-        a.forEach(element => { 
-            c +=   "<div class=\"card\">";
-            c +=   "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/750/300?random="+element+"\"></div>";
-            c +=   "<div class=\"card-body\">";
-            c +=   "<h5 class=\"card-title\">Card title</h5>";
-            c +=   "<p class=\"card-text\">Some quick example text to build on the card title and make up the bulk of the card's content.</p>";
-            c +=   "</div>";
-            c +=   "</div>";
-            c +=   "<br>";
-            c +=   "<br>";
 
-    });
-    b.innerHTML = c;
+//agregar a playlist listo
+function nuevoPlay(cancion, artista){
+    let cancioncita = arts.getCancion(cancion, artista);
+    if (cancioncita != null){
+        usuarioLog.myplay.push(new nodoPlay(cancioncita));
+    }
 }
 
+function deleteBlock(){
+    usuarioLog.bloq.desencolar();
+    vistaBloqueados();
+}
 
+function nuevoPod(){
+    let nombre = document.getElementById("nombrePod").value;
+    let descripcion = document.getElementById("descripcionPod").value;
+    let duracion = document.getElementById("durapod").value;
+    let invitados = document.getElementById("invitadospod").value;
+    let aux = new PodCast(nombre, descripcion, categoria, imagen);
+    usuarioLog.pod.agregar(aux);
+    vistaPodcast();
+}
 
-}*/
+//metodo extra para ver orden y darle ordenamiento a los artistas
+function letratoNum(letra){
+    switch (letra) {
+        case "a" || "A":
+            return 1;
+        case "b" || "B":
+            return 2;
+        case "c" || "C":
+            return 3;
+        case "d" || "D":
+            return 4;
+        case "e" || "E":
+            return 5;
+        case "f" || "F":
+            return 6;
+        case "g" || "G":
+            return 7;
+        case "h" || "H":
+            return 8;
+        case "i" || "I":
+            return 9;
+        case "j" || "J":
+            return 10;
+        case "k" || "K":
+            return 11;
+        case "l" || "L":
+            return 12;
+        case "m" || "M":
+            return 13;
+        case "n" || "N":
+            return 14;
+        case "ñ" || "Ñ":
+            return 15;
+        case "o" || "O":
+            return 16;
+        case "p" || "P":
+            return 17;
+        case "q" || "Q":
+            return 18;
+        case "r" || "R":
+            return 19;
+        case "s" || "S":
+            return 20;
+        case "t" || "T":
+            return 21;
+        case "u" || "U":
+            return 22;
+        case "v" || "V":
+            return 23;
+        case "w" || "W":
+            return 24;
+        case "x" || "X":
+            return 25;
+        case "y" || "Y":
+            return 26;
+        case "z" || "Z":
+            return 27;
+        default:
+            return 0;
+    }
+}
+
+function alpha(){
+    alert("chilero tu orden alphabetiko")
+    console.log(arts);
+    arts.ordenamientoBurbujaArtistas();
+    console.log(arts);
+    vistaArtistas();
+}
+
+function disalpha(){
+    alert("chilero tu orden disalphabetiko")
+}
+
