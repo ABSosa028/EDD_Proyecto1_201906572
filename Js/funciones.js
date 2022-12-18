@@ -20,12 +20,47 @@ class amigos{
         if(this.primero == null){
             alert("No hay elementos para eliminar");
         }else{
+            if(this.primero == this.ultimo){
+                this.primero = null;
+                this.ultimo = null;
+                return;
+            }
             var temp = this.primero;
             while (temp.siguiente != this.ultimo){
                 temp = temp.siguiente;
             }
             temp.siguiente = null;
             this.ultimo = temp;
+        }
+    }
+
+    buscarAmigo(user){
+        if(this.primero == null){
+            return false;
+        }else{
+            var temp = this.primero;
+            while (temp != null){
+                if(temp.usuario == user){
+                    return true;
+                }
+                temp = temp.siguiente;
+            }
+            return false;
+        }
+    }
+
+    buscarAmigo2(user){
+        if(this.primero == null){
+            return false;
+        }else{
+            var temp = this.primero;
+            while (temp != null){
+                if(temp == user){
+                    return true;
+                }
+                temp = temp.siguiente;
+            }
+            return false;
         }
     }
 }
@@ -151,6 +186,21 @@ class listaUsuarios{
         return a;
     }
 
+    buscarUsuario(user){
+        if(this.primero == null){
+            return null;
+        }else{
+            var temp = this.primero;
+            while (temp != null){
+                if(temp.usuario == user){
+                    return temp;
+                }
+                temp = temp.siguiente;
+            }
+            return null;
+        }
+    }
+
 
 }
 
@@ -231,12 +281,10 @@ class Artistas{
                     tempCancion.siguiente = cancion;
                     cancion.anterior = tempCancion;
                 }
-                console.log("agregado");
                 return;
             }
             temp = temp.siguiente;
         }
-        console.log("Artista no encontrado");
     }
 
     mostrarTodo(){
@@ -602,7 +650,6 @@ class MatrizD {
         }
 
         codigodot = codigodot.concat("\n}");
-        console.log(codigodot);
 
         // d3.select("#lienzo3").graphviz()
         // .renderDot(codigodot)
@@ -755,6 +802,7 @@ function vistaPlaylist(){
 }
 
 function vistaAmigos(){
+    dataUsuarios();
     dataAmigos();
     document.getElementById("uno").style.display = "none";
     document.getElementById("dos").style.display = "none";
@@ -819,7 +867,7 @@ function cargarUsuarios(datas){
         
     }
     reader.readAsText(datas);
-    console.log(users.mostrarTodo())
+
 
 }
 
@@ -1029,10 +1077,6 @@ function deselectFile(){
     d.value = "";
     e.value = "";
 
-
-    console.log(MusicaProgramada.graficar_matriz());
-    console.log(MusicaProgramada);
-
 }
 
 function crearunUsuario(){
@@ -1045,7 +1089,6 @@ function crearunUsuario(){
         alert("no se puede crear el usuario, hay campos vacios")
     }else{
         var nuevoUsuario = new Usuario(usuario, nombre, dpi, fone, pass, false);
-        console.log(nuevoUsuario.texto())
         users.agregar(nuevoUsuario);
         alert("usuario creado con exito")
         document.getElementById("us").value = "";
@@ -1061,7 +1104,6 @@ function dataArtistas(){
     let a = [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
 
     let b = document.getElementById("hola");
-    console.log(b);
     let c = ""
     let aux2 = arts.primero;
     while (aux2 != null){
@@ -1086,7 +1128,7 @@ function dataArtistas(){
         aux2 = aux2.siguiente;
     }
     b.innerHTML = c;
-    console.log(c)
+
 }
 
 function dataAtt(){
@@ -1099,9 +1141,9 @@ function dataAtt(){
     while (aux2 != null){
         let pub = 0;
         let aux = aux2.cabezaCancion;
-        c+= "<div class = \"card-columns\">";
+        c+= "<div class = \"grid-container\">";
         c +=   "<div class=\"card\">";
-            c +=   "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/243/320?random="+a[Math.floor(Math.random() * a.length)]+"\"></div>";
+            c +=   "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/200/320?random="+a[Math.floor(Math.random() * a.length)]+"\"></div>";
             c +=   "<div class=\"card-body\">";
             c +=   "<h5 class=\"card-title\">"+aux2.nombre+"</h5>";
             c +=   "<h5 class=\"card-title\">"+aux2.edad+"</h5>";
@@ -1113,14 +1155,13 @@ function dataAtt(){
 
         while (aux != null){
             pub += 1;
-            c +=   "<div class=\"scroll_horizontal\">";
-            c +=   "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/243/320?random="+a[Math.floor(Math.random() * a.length)]+"\"></div>";
+            c +=   "<div class=\"grid-item\">";
+            c +=   "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/180/320?random="+a[Math.floor(Math.random() * a.length)]+"\"></div>";
             c +=   "<div class=\"card-body\">";
             c +=   "<h5 class=\"card-title\">"+aux.nombre+"</h5>";
             c +=   "<p class=\"card-text\">"+aux.tiempo+"</p>";
             c +=   "<p class=\"card-text\">"+aux.artista+"</p>";
-            c +=   "<p class=\"card-text\">"+aux.genero+"</p>";
-            c +=  "<i class=\"bi bi-play-fill\"></i>"
+            c +=   "<p class=\"card-text\"><h6>"+aux.genero+"<h6></p>";
             c +=   "</div>";
             c +=   "</div>";
 
@@ -1128,11 +1169,10 @@ function dataAtt(){
             aux = aux.siguiente;
         }
         if (pub == 0){
-            c +=   "<div class=\"scroll_horizontal\">";
+            c +=   "<div class=\"grid-item\">";
             c +=   "<div class=\"card-img-top\"><br><img ></div>";
             c +=   "<div class=\"card-body\">";
             c +=   "<h5 class=\"card-title\"> Sin Canciones </h5>";
-            c +=  "<i class=\"bi bi-play-fill\"></i>"
             c +=   "</div>";
             c +=   "</div>";
         }
@@ -1143,18 +1183,101 @@ function dataAtt(){
 
     }
     b.innerHTML = c;
-    console.log(c)
+
+}
+
+
+
+function dataUsuarios(){
+    //vistadetodos
+    let a = [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+    let b = document.getElementById("vistadetodos");
+    let c = ""
+    let aux = users.primero;
+
+        c += "<center>"
+        c += "<h1>Usuarios</h1>"
+        c += "</center>"
+        c += "<div class = \"grid-container\">";
+        while (aux != null){
+            if(aux != usuarioLog){
+                let amigaso = usuarioLog.amix.buscarAmigo(aux);
+                if(amigaso == false){
+                    c +=   "<div class=\"grid-item card\">";
+                    c +=   "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/180/320?random="+a[Math.floor(Math.random() * a.length)]+"\"></div>";
+                    c +=   "<div class=\"card-body\">";
+                    c +=   "<h5 class=\"card-title\">"+aux.nombre+"</h5>";
+                    c +=   "<p class=\"card-text\"><h6>"+aux.usuario+"</h6></p>";
+                    c +=   "<button type=\"button\" class=\"btn btn-primary\" onclick=\"añadir('"+aux.usuario+"')\">Añadir</button>"
+                    c +=   "</div>";
+                    c +=   "</div>";
+                }
+            }
+            aux = aux.siguiente;
+        }
+        c+= "</div>";
+        c+= "<br>";
+        c+= "<br>";
+    b.innerHTML = c;
+
+
 }
 
 function dataAmigos(){
+    //vistadetodos
+    let a = [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+
+    let b = document.getElementById("vistadeamigos");
+    let c = ""
+    let aux = usuarioLog.amix.primero;
+    c += "<center>"
+    c += "<h1>Amigos</h1>"
+    c += "</center>"
+    c += "<div class = \"grid-container\">";
+    while (aux != null){
+        if(aux != usuarioLog){
+                c +=   "<div class=\"grid-item card\">";
+                c +=   "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/180/320?random="+a[Math.floor(Math.random() * a.length)]+"\"></div>";
+                c +=   "<div class=\"card-body\">";
+                c +=   "<h5 class=\"card-title\">"+aux.nombre+"</h5>";
+                c +=   "<p class=\"card-text\"><h6>"+aux.usuario+"</h6></p>";
+                c +=   "</div>";
+                c +=   "</div>";
+        }
+        aux = aux.siguiente;
+    }
+    c+= "</div>";
+    c+= "<br>";
+    c+= "<br>";
+    b.innerHTML = c;
 
 }
+
 
 function dataBloqueados(){
 
 }
 
 
+function añadir(aux){
+
+    let nuevoAmigo = users.buscarUsuario(aux);
+    if (nuevoAmigo != null){
+        let existe = usuarioLog.amix.buscarAmigo2(nuevoAmigo);
+        if (existe == false){
+            usuarioLog.amix.push(nuevoAmigo);
+        }else{
+            alert("Ya es tu amigo")
+        }
+    }
+    vistaAmigos();
+}
+
+
+function deleteFriend(){
+    usuarioLog.amix.pop();
+    vistaAmigos();
+}
 /*
         a.forEach(element => { 
             c +=   "<div class=\"card\">";
