@@ -5,6 +5,8 @@ class amigo{
     }
 }
 
+
+
 class amigos{
     constructor(){
         this.primero = null;
