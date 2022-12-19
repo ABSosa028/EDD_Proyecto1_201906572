@@ -5,7 +5,6 @@ class amigo{
     }
 }
 
-
 class amigos{
     constructor(){
         this.primero = null;
@@ -73,6 +72,37 @@ class amigos{
             return false;
         }
     }
+
+    dotpila(){
+        var temp = this.primero;
+        var a = 0;
+        var t = "amigo"
+        var dot = "";
+        while (temp != null){
+            dot += t+a + "[label = \"" + temp.cual.usuario + "\"];\n";
+            if(temp.next != null){
+                dot += t+(a+1) + "[label = \""+temp.next.cual.usuario+"\"];\n";
+            }
+            temp = temp.next;
+            a++;
+        }
+        temp = this.primero;
+        a = 0;
+        while (temp != null){
+            if(temp.next != null){
+                dot += t+a + " -> " + t+(a+1) + ";\n";
+            }
+            temp = temp.next;
+            a++;
+        }
+
+        return dot;
+    }
+
+
+
+
+
 }
 
 class playList{
@@ -101,7 +131,7 @@ class playList{
             alert("No hay elementos para eliminar");
         }else{
             var temp = this.primero;
-            while (temp != null){
+            while (temp != null && temp.siguiente != this.primero){
                 if(temp.cancion == cancion){
                     if(temp == this.primero){
                         this.primero = temp.siguiente;
@@ -127,6 +157,39 @@ class playList{
             alert("No se encontro la cancion");
         }
     }
+
+    dotcircularDoble(){
+        var temp = this.primero;
+        var a = 0;
+        var t = "cancion"
+        var dot = "";
+
+        if(this.primero == null){
+            return dot;
+        }
+        while (temp != null && temp.siguiente != this.primero){
+            dot += t+a + "[label = \"" + temp.cancion.nombre + "\"];\n";
+            a++;
+            if(temp.siguiente != this.primero){
+                dot += t+a + "[label = \""+temp.siguiente.cancion.nombre+"\"];\n";
+            }
+            temp = temp.siguiente;
+        }
+        temp = this.primero;
+        a = 0;
+        while (temp != null && temp.siguiente != temp && temp.siguiente != this.primero){
+            if(temp.siguiente != null && temp.siguiente != temp){
+                dot += t+a + " -> " + t+(a+1) + ";\n";
+            }
+            temp = temp.siguiente;
+            a++;
+        }
+        dot += t+(a) + " -> " + t+0 + ";\n";
+
+
+        return dot;
+    }
+
 
 }
 
@@ -179,6 +242,32 @@ class bloqueados{
             }
             return false;
         }
+    }
+
+    dotcola(){
+        var temp = this.primero;
+        var a = 0;
+        var t = "bloqueado"
+        var dot = "";
+        while (temp != null){
+            dot += t+a + "[label = \"" + temp.cual.usuario + "\"];\n";
+            if(temp.siguiente != null){
+                dot += t+(a+1) + "[label = \""+temp.siguiente.cual.usuario+"\"];\n";
+            }
+            temp = temp.siguiente;
+            a++;
+        }
+        temp = this.primero;
+        a = 0;
+        while (temp != null){
+            if(temp.siguiente != null){
+                dot += t+a + " -> " + t+(a+1) + ";\n";
+            }
+            temp = temp.siguiente;
+            a++;
+        }
+
+        return dot;
     }
 }
 
@@ -299,6 +388,42 @@ class listaUsuarios{
     }
 
 
+    dot(){
+        var temp = this.primero;
+
+        var a = 0;
+        var t = "user"
+        var dot = "digraph G {\n";
+        dot += "node [shape = record];\n";
+        dot += "rankdir = LR;\n";
+        dot += "node [width = 1.5];\n";
+        dot += "node [height = 0.5];\n";
+        dot += "node [color = \"#006699\", style = filled];\n";
+        dot += "edge [color = \"#31CEF0\"];\n";
+
+        while (temp != null){
+            dot += t+a + "[label = \"" + temp.usuario + "\"];\n";
+            if(temp.siguiente != null){
+                dot += t+(a+1) + "[label = \""+temp.siguiente.usuario+"\"];\n";
+            }
+            temp = temp.siguiente;
+            a++;
+        }
+        temp = this.primero;
+        a = 0;
+        while (temp != null){
+            if(temp.siguiente != null){
+                dot += t+a + " -> " + t+(a+1) + ";\n";
+            }
+            temp = temp.siguiente;
+            a++;
+        }
+
+        dot += "}";
+
+        return dot;
+    }
+
 }
 
 class Artista{
@@ -362,6 +487,58 @@ class Artistas{
             }
             return;
         }
+    }
+
+    dot(){
+        var a = "digraph G {\n";
+        a += "node [shape=record];\n";
+        a += "edge[dir=\"both\"];\n";
+        a += "label=\"MUSICA\";\n";
+        a += "node[shape=box];\n";
+        var temp = this.primero;
+        while(temp != null){
+            a += temp.nombre.replace(" ", "_") + ";\n";
+            temp = temp.siguiente;
+        }
+        temp = this.primero;
+        while(temp != null){
+            if(temp.siguiente != null){
+
+                a += temp.nombre.replace(" ", "_") + " -> " + temp.siguiente.nombre.replace(" ", "_") + "[constraint=false];\n";
+            }
+
+            temp = temp.siguiente;
+        }
+        temp = this.primero;
+        while(temp != null){
+            var o = temp.nombre;
+            var z = 0;
+
+            var tempCancion = temp.cabezaCancion;
+            if(tempCancion == null){
+                temp = temp.siguiente;
+                continue;
+            }
+            while(tempCancion != null){
+                a += o.replace(" ", "_")+z +"[label=\""+tempCancion.nombre+" ("+tempCancion.artista+")\"];\n";
+                z++;
+                tempCancion = tempCancion.siguiente;
+            }
+            tempCancion = temp.cabezaCancion;
+            z = "";
+            a += o.replace(" ", "_")+z +" -> "+ o.replace(" ", "_")+(0)+";\n";
+            z = 0;
+            while(tempCancion != null){
+                if(tempCancion.siguiente != null){
+                    a += o.replace(" ", "_")+z +" -> "+ o.replace(" ", "_")+(z+1)+";\n";
+                }
+                z++;
+                tempCancion = tempCancion.siguiente;
+            }
+            temp = temp.siguiente;
+        }
+        a += "}";
+        return a;
     }
 
     agregarCancion(nombreArtista, cancion){
@@ -722,32 +899,33 @@ class MatrizD {
         rank = rank.concat("}\n");
         codigodot = codigodot.concat(rank);
         hor = this.lista_horizontal.primero;
-        codigodot = codigodot.concat ("a ->");
+        codigodot = codigodot.concat ("a -> ");
         while(hor != null){
             aux1 = hor.siguiente;
             if(aux1 != null){
-                codigodot = codigodot.concat (hor.valor + "->" + aux1.valor + ";");
+                codigodot = codigodot.concat (hor.valor + " -> " + aux1.valor + ";");
             }
-            hor = hor.siguiente;t     
+            hor = hor.siguiente;     
         }
         codigodot = codigodot.concat("\n");
         while(ver != null){
             codigodot = codigodot.concat(numMes(ver.valor) + "[label = \"" + numMes(ver.valor) +"\" fillcolor=pink];\n");
-
             ver = ver.siguiente; 
         }
 
         ver = this.lista_vertical.primero;
-        codigodot = codigodot.concat ("a ->");
+        codigodot = codigodot.concat ("a -> ");
         while(ver != null){
             aux2 = ver.siguiente;
             if(aux2 != null){
-                codigodot = codigodot.concat (numMes(ver.valor) + "->" + numMes(aux2.valor) + ";");
+                codigodot = codigodot.concat (numMes(ver.valor) + " -> " + numMes(aux2.valor) + ";");
             }
             ver = ver.siguiente;
         }
         codigodot = codigodot.concat("\n");
                 
+
+        //aqui empiezan los nodos
         ver = this.lista_vertical.primero;
         while(ver != null){
             var rank2 = "{rank = same; " + numMes(ver.valor) + ";";
@@ -755,7 +933,7 @@ class MatrizD {
             codigodot = codigodot.concat(numMes(aux1.y));
             while(aux1 != null){
                 rank2 = rank2.concat(aux1.valor + ";");
-                codigodot = codigodot.concat("->" + aux1.valor );
+                codigodot = codigodot.concat(" -> " + aux1.valor );
                 aux1 = aux1.derecha;
             }
             codigodot = codigodot.concat("[constraint=false]");
@@ -772,7 +950,7 @@ class MatrizD {
             codigodot = codigodot.concat(aux1.x);
             while(aux1 != null){
                 rank3 = rank3.concat(aux1.valor + ";");
-                codigodot = codigodot.concat("->" + aux1.valor );
+                codigodot = codigodot.concat(" -> " + aux1.valor );
                 aux1 = aux1.abajo;
             }
             codigodot = codigodot.concat(";\n");
@@ -781,11 +959,94 @@ class MatrizD {
         }
 
         codigodot = codigodot.concat("\n}");
+        console.log(codigodot);
+        return codigodot;
+
 
         // d3.select("#lienzo3").graphviz()
         // .renderDot(codigodot)
     }
+
+
+    dotMatrizDispersa(){
+        var c = "digraph G{bgcolor=none \n graph[size = \"11.70,6.25\" ]\n   nodesep = 0.6 edge[dir = \"both\"] \nlabel=\" MUSICA PROGRAMADA \";\n node [shape=box];\n node[style=filled];\n";
+        let hor = this.lista_horizontal.primero;
+        let ver = this.lista_vertical.primero;
+
+        let aux1;
+        let aux2;
+        c = c.concat ("a[label = \"MD\" fillcolor=red];\n");
+        var rank = "{rank = same; a;";
+        while(hor != null){
+            c = c.concat(hor.valor + "[label = \"" + hor.valor + "\" fillcolor=white];\n");
+            rank = rank.concat(hor.valor + ";");
+            hor = hor.siguiente;
+        }
+        rank = rank.concat("}\n");
+        c = c.concat(rank);
+        hor = this.lista_horizontal.primero;
+        c = c.concat ("a -> ");
+        while(hor != null){
+            aux1 = hor.siguiente;
+            if(aux1 != null){
+                c = c.concat (hor.valor + " -> " + aux1.valor + ";");
+            }
+            hor = hor.siguiente;     
+        }
+        c = c.concat("\n");
+        while(ver != null){
+            c = c.concat(ver.valor + "[label = \"" + ver.valor +"\" fillcolor=white];\n");
+            ver = ver.siguiente; 
+        }
+        var x = "x";
+        var y = "y";
+        var i = 0;
+        var j = 0;
+    
+        ver = this.lista_vertical.primero;
+        c = c.concat ("a -> ");
+        while(ver != null){
+            aux2 = ver.siguiente;
+            if(aux2 != null){
+                c = c.concat (ver.valor + " -> " + aux2.valor + ";");
+            }
+            ver = ver.siguiente;
+        
+    
+        }
+        c = c.concat("\n");
+        ver = this.lista_vertical.primero;
+        while(ver != null){
+            var rank2 = "{rank = same; " + ver.valor + ";";
+            aux1 = ver.derecha;
+            c = c.concat(ver.valor);
+            while(aux1 != null){
+                rank2 = rank2.concat(aux1.valor + ";");
+                c = c.concat(" -> " + aux1.valor );
+                aux1 = aux1.derecha;
+            }
+            c = c.concat("[constraint=false]");
+            c = c.concat(";\n");
+            rank2 = rank2.concat("}\n");
+            c = c.concat(rank2);
+            ver = ver.siguiente;
+        }
+    }
+
+
+
+
+
+        
+
+
+
+   
+
 }
+
+
+
 
 class PodCast{
     constructor(nombre, duracion, invitados, tema){
@@ -806,8 +1067,10 @@ class PodCasts{
     agregar(nuevo){
         if(this.raiz == null){
             this.raiz = nuevo;
+            console.log("Se agrego el nodo raiz")
         }else{
             this.agregarNodo(this.raiz, nuevo);
+
         }
     }
 
@@ -815,16 +1078,167 @@ class PodCasts{
         if(raiz.duracion > nuevo.duracion){
             if(raiz.izq == null){
                 raiz.izq = nuevo;
+                console.log("Se agrego el nodo a la izquierda");
             }else{
                 this.agregarNodo(raiz.izq, nuevo);
+                
             }
         }else{
             if(raiz.der == null){
                 raiz.der = nuevo;
+                console.log("Se agrego el nodo a la derecha");
             }else{
                 this.agregarNodo(raiz.der, nuevo);
             }
         }
+    }
+
+    inOrden(){
+        this.inOrdenAux(this.raiz);
+    }
+
+    inOrdenAux(raiz){
+        if(raiz != null){
+            this.inOrdenAux(raiz.izq);
+            console.log(raiz.nombre);
+            this.inOrdenAux(raiz.der);
+        }
+    }
+
+    preOrden(){
+        this.preOrdenAux(this.raiz);
+    }
+
+    preOrdenAux(raiz){
+        if(raiz != null){
+            console.log(raiz.nombre);
+            this.preOrdenAux(raiz.izq);
+            this.preOrdenAux(raiz.der);
+        }
+    }
+
+    postOrden(){
+        this.postOrdenAux(this.raiz);
+    }
+
+    postOrdenAux(raiz){
+        if(raiz != null){
+            this.postOrdenAux(raiz.izq);
+            this.postOrdenAux(raiz.der);
+            console.log(raiz.nombre);
+        }
+    }
+
+    inOrdentoHtml(){
+        document.getElementById("vistadelosPodcast").innerHTML = "";
+        this.inOrdentoHtmlAux(this.raiz);
+    }
+
+    inOrdentoHtmlAux(raiz){
+        if(raiz != null){
+            let a = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50]
+            this.inOrdentoHtmlAux(raiz.izq);
+            let c = ""
+            c += "<div class='card' style='width: 18rem;'>"
+            c += "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/180/320?random="+a[Math.floor(Math.random() * a.length)]+"\"></div>";
+            c += "<div class='card-body'>"
+            c += "<h5 class='card-title\">'"+raiz.nombre+"'</h5>"
+            c += "<h6 class='card-subtitle mb-2 text-muted'>Duracion: "+raiz.duracion+"</h6>"
+            c += "<p class='card-text'>Invitados: "+raiz.invitados+"</p>"
+            c += "<p class='card-text'>Tema: "+raiz.tema+"</p>"
+            c += "</div>"
+            c += "</div>"
+            document.getElementById("vistadelosPodcast").innerHTML += c;
+            this.inOrdentoHtmlAux(raiz.der);
+        }
+    }
+
+    preOrdentoHtml(){
+        document.getElementById("vistadelosPodcast").innerHTML = "";
+        this.preOrdentoHtmlAux(this.raiz);
+    }
+
+    preOrdentoHtmlAux(raiz){
+        if(raiz != null){
+            let a = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50]
+            console.log(raiz.nombre);
+            let c = ""
+            c += "<div class='card' style='width: 18rem;'>"
+            c += "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/240/320?random="+a[Math.floor(Math.random() * a.length)]+"\"></div>";
+            c += "<div class='card-body'>"
+            c += "<h5 class='card-title\">'"+raiz.nombre+"'</h5>"
+            c += "<h6 class='card-subtitle mb-2 text-muted'>Duracion: "+raiz.duracion+"</h6>"
+            c += "<p class='card-text'>Invitados: "+raiz.invitados+"</p>"
+            c += "<p class='card-text'>Tema: "+raiz.tema+"</p>"
+            c += "</div>"
+            c += "</div>"
+            document.getElementById("vistadelosPodcast").innerHTML += c;
+            this.preOrdentoHtmlAux(raiz.izq);
+            this.preOrdentoHtmlAux(raiz.der);
+        }
+    }
+
+    postOrdentoHtml(){
+        document.getElementById("vistadelosPodcast").innerHTML = "";
+        this.postOrdentoHtmlAux(this.raiz);
+
+    }
+
+    postOrdentoHtmlAux(raiz){
+        if(raiz != null){
+            let a = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50]
+            this.postOrdentoHtmlAux(raiz.izq);
+            this.postOrdentoHtmlAux(raiz.der);
+            console.log(raiz.nombre);
+            let c = ""
+            c += "<div class='card' style='width: 18rem;'>"
+            c += "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/240/320?random="+a[Math.floor(Math.random() * a.length)]+"\"></div>";
+            c += "<div class='card-body'>"
+            c += "<h5 class='card-title\">'"+raiz.nombre+"'</h5>"
+            c += "<h6 class='card-subtitle mb-2 text-muted'>Duracion: "+raiz.duracion+"</h6>"
+            c += "<p class='card-text'>Invitados: "+raiz.invitados+"</p>"
+            c += "<p class='card-text'>Tema: "+raiz.tema+"</p>"
+            c += "</div>"
+            c += "</div>"
+            document.getElementById("vistadelosPodcast").innerHTML += c;
+        }
+    }
+
+
+    dot(){
+        let c = "digraph G {\n";
+        c += this.dotAux(this.raiz);
+        c += "}";
+        return c;
+    }
+
+    dotAux(raiz){
+        if(raiz != null){
+            let c = "";
+            var t = raiz.nombre;
+            t = t.replace(" ", "_");
+
+            c += t + "[label = \"" + raiz.nombre + "\"];\n";
+            if(raiz.izq != null){
+                var b = raiz.nombre;
+                b = b.replace(" ", "_");
+                var a = raiz.izq.nombre;
+                a = a.replace(" ", "_");
+
+                c += b + " -> " + a+ ";\n";
+                c += this.dotAux(raiz.izq);
+            }
+            if(raiz.der != null){
+                var a = raiz.der.nombre;
+                a = a.replace(" ", "_");
+                b = raiz.nombre;
+                b = b.replace(" ", "_");
+                c += b + " -> " + a + ";\n";
+                c += this.dotAux(raiz.der);
+            }
+            return c;
+        }
+        return "";
     }
 
 }
@@ -835,10 +1249,11 @@ let users = new listaUsuarios();
 let arts = new Artistas();
 let MusicaProgramada = new MatrizD();
 let usuarioLog = null;
+let Pods = new PodCasts();
 
 //quemado de usuarios masters
-users.agregar(new Usuario("EDD", "Oscar Armin", 2654568452521, 1231234567, "123", true));
-users.agregar(new Usuario("a", "Alan Barillas", 3032428560108, 58624710, "a", false));
+users.agregar(new Usuario("EDD", "Oscar Armin", 2654568452521, 1231234567, encriptar("123"), true));
+users.agregar(new Usuario("a", "Alan Barillas", 3032428560108, 58624710, encriptar("a"), false));
 
 //metodo de logueo
 try{
@@ -853,7 +1268,7 @@ try{
          if(formulario.get("admon") != null){
              //admin log here
        
-                 var ok = users.login(formulario.get("user"), formulario.get("pass"), true)
+                 var ok = users.login(formulario.get("user"), encriptar(formulario.get("pass")), true)
                  if(ok != null) {
                     usuarioLog = ok;
                      mostrarcuatro();
@@ -864,7 +1279,7 @@ try{
          }else{
              //user log here
              var ok = null; 
-             ok = users.login(formulario.get("user"), formulario.get("pass"), false);
+             ok = users.login(formulario.get("user"), encriptar(formulario.get("pass")), false);
              if(ok != null){
                 usuarioLog = ok;
                 vistaMusica();
@@ -968,6 +1383,7 @@ function vistaArtistas(){
 }
 //mostrar contenedor con vista de playlist
 function vistaPlaylist(){
+    graphvizdotPlay();
     dataPlay();
     document.getElementById("uno").style.display = "none";
     document.getElementById("dos").style.display = "none";
@@ -983,8 +1399,10 @@ function vistaPlaylist(){
 }
 //mostrar contenedor con vista de amigos
 function vistaAmigos(){
+    console.log("vista amigos")
     dataUsuarios();
     dataAmigos();
+    graphvizdotPila();
     document.getElementById("uno").style.display = "none";
     document.getElementById("dos").style.display = "none";
     document.getElementById("tres").style.display = "none";
@@ -998,9 +1416,15 @@ function vistaAmigos(){
     document.body.style.backgroundColor = "white";
 
 }
+function encriptar (texto){
+    var textoCifrado = texto.replace(/e/gi, "enter").replace(/i/gi, "imes").replace(/a/gi, "ai").replace(/o/gi, "ober").replace(/u/gi, "ufat");
+    return textoCifrado
+
+}
 
 //mostrar contenedor con vista de bloqueados
 function vistaBloqueados(){
+    graphvizdotCola();
     dataBloqueados();
     document.getElementById("uno").style.display = "none";
     document.getElementById("dos").style.display = "none";
@@ -1016,7 +1440,6 @@ function vistaBloqueados(){
 }
 
 function vistaPodcast(){
-    //dataBloqueados();
     document.getElementById("uno").style.display = "none";
     document.getElementById("dos").style.display = "none";
     document.getElementById("tres").style.display = "none";
@@ -1027,7 +1450,6 @@ function vistaPodcast(){
     document.getElementById("vistaAmigos").style.display = "none";
     document.getElementById("vistaBloqueados").style.display = "none";
     document.getElementById("vistaPodcast").style.display = "block";
-
     document.body.style.backgroundColor = "white";
 }
 
@@ -1178,17 +1600,16 @@ function cargarPodcast(datas){
         for (let index = 0; index < json.length; index++) {
             var element = json[index];
             try{
-                var mes = element["name"]
-                var dia = element["topic"]
-                var cancion = element["song"]
-                var artista = element["artist"]
-                if(artista==undefined || mes == undefined || dia == undefined || cancion == undefined){
+                var name = element["name"]
+                var topic = element["topic"]
+                var dur = element["duration"]
+                var inv = element["guests"]
+                if(name==undefined || topic == undefined || dur == undefined || inv == undefined){
                     error += 1;
                 }else{
-                    var nuevaMusica = new nodoMusica(mes, dia, cancion, artista);
-                    console.log(nuevaMusica.texto())
-                    //agregar a musicaProgramada
-                    //arts.agregarCancion(nuevaMusica)
+                    var nuevaMusica = new PodCast(name, dur, inv, topic);
+                    Pods.agregar(nuevaMusica);
+
                 }
             }catch{
 
@@ -1270,6 +1691,7 @@ function numMes(num){
 
 //deseleccionar los archivos de los input file
 function deselectFile(){
+    alert("Informacion Cargada ")
     var a = document.getElementById("fus");
     var b = document.getElementById("far")
     var c = document.getElementById("fmp")
@@ -1293,7 +1715,7 @@ function crearunUsuario(){
     if (usuario == "" || nombre == "" || dpi == "" || fone == "" || pass == ""){
         alert("no se puede crear el usuario, hay campos vacios")
     }else{
-        var nuevoUsuario = new Usuario(usuario, nombre, dpi, fone, pass, false);
+        var nuevoUsuario = new Usuario(usuario, nombre, dpi, fone, encriptar(pass), false);
         users.agregar(nuevoUsuario);
         alert("usuario creado con exito")
         document.getElementById("us").value = "";
@@ -1458,6 +1880,7 @@ function dataAmigos(){
     c+= "<br>";
     b.innerHTML = c;
 
+
 }
 
 //añadir a vista de bloqueados
@@ -1499,48 +1922,36 @@ function dataPlay(){
     c += "<center>"
     c += "<h1>Mi PlayList</h1>"
     c += "</center>"
-    c += "<div id = \"carouselExampleControls\" class=\"carousel slide\" data-ride=\"carousel\">";
-    c += "<div class=\"carousel-inner\">";
+    c += ""
     if (aux != null){
-        c += "<div class=\"carousel-item active\">";
-        c += "<img class = \"d-block w-100\" src=\"https://picsum.photos/1440/974?random="+a[Math.floor(Math.random() * a.length)]+"\">";
-        c += "<p>"+aux.cancion.nombre+"</p>";
-        c += "<p>"+aux.cancion.tiempo+"</p>";
-        c += "</div>"
-        aux = aux.siguiente;
+        c +=   "<div class=\"grid-item card\">";
+        c +=   "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/180/320?random="+a[Math.floor(Math.random() * a.length)]+"\"></div>";
+        c +=   "<div class=\"card-body\">";
+        c +=   "<h5 class=\"card-title\">"+aux.cancion.nombre+"</h5>";
+        c +=   "<p class=\"card-text\"><h6>"+aux.cancion.artista+"</h6></p>";
+        c +=   "</div>";
+        c +=   "</div>";
     }else{
-        c += "<div class=\"carousel-item active\">";
-       
         c += "<p style=\"color=\"Red\"; \"><h1>Playlist Vacia</h1></p>";
         c += "</div>";
     }
     while (aux != null && aux != usuarioLog.myplay.primero){
-        c += "<div class=\"carousel-item \">";
-        c += "<img class = \"d-block w-100 card\" src=\"https://picsum.photos/1440/974?random="+a[Math.floor(Math.random() * a.length)]+"\">";
-        c += "<p>"+aux.cancion.nombre+"</p>";
-        c += "<p>"+aux.cancion.tiempo+"</p>";
-        c += "</div>"
-        aux = aux.siguiente;
-    }
-    c+= "</div>";
-    c+= "<a class=\"carousel-control-prev\" href=\"#carouselExampleControls\" role=\"button\" data-slide=\"prev\">";
-    c+= "<span class=\"carousel-control-prev-icon\" aria-hidden=\"true\"></span>";
-    c+= "<span class=\"sr-only\">Previous</span>";
-    c+= "</a>";
-    c+= "<a class=\"carousel-control-next\" href=\"#carouselExampleControls\" role=\"button\" data-slide=\"next\">";
-    c+= "<span class=\"carousel-control-next-icon\" aria-hidden=\"true\"></span>";
-    c+= "<span class=\"sr-only\">Next</span>";
-    c+= "</a>";
-    c+= "</div>";
-    c+= "<br>";
-    c+= "<br>";
-    b.innerHTML = c;
+        c +=   "<div class=\"grid-item card\">";
+        c +=   "<div class=\"card-img-top\"><br><img src=\"https://picsum.photos/180/320?random="+a[Math.floor(Math.random() * a.length)]+"\"></div>";
+        c +=   "<div class=\"card-body\">";
+        c +=   "<h5 class=\"card-title\">"+aux.cancion.nombre+"</h5>";
+        c +=   "<p class=\"card-text\"><h6>"+aux.cancion.artista+"</h6></p>";
+        c +=   "</div>";
+        c +=   "</div>";
+        aux = aux.siguiente
 
+
+    }
+    b.innerHTML = c;
 }
 
 function dataPodcast(){
 }
-
 
 //añadir un amigo listo
 function añadir(aux){
@@ -1549,7 +1960,8 @@ function añadir(aux){
     if (nuevoAmigo != null){
         let existe = usuarioLog.amix.buscarAmigo2(nuevoAmigo);
         if (existe == false){
-            usuarioLog.amix.push(new amigo(nuevoAmigo));
+            var amixxx = new amigo(nuevoAmigo);
+            usuarioLog.amix.push(amixxx);
         }else{
             alert("Ya es tu amigo")
         }
@@ -1595,8 +2007,18 @@ function nuevoPod(){
     let descripcion = document.getElementById("descripcionPod").value;
     let duracion = document.getElementById("durapod").value;
     let invitados = document.getElementById("invitadospod").value;
-    let aux = new PodCast(nombre, descripcion, categoria, imagen);
+    if(nombre == "" || descripcion == "" || duracion == "" || invitados == ""){
+
+        alert("No puedes dejar campos vacios");
+        return;
+    }
+    let aux = new PodCast(nombre, duracion, invitados, descripcion);
     usuarioLog.pod.agregar(aux);
+    nombre.value = "";
+    descripcion.value = "";
+    duracion.value = "";
+    invitados.value = "";
+    alert("Podcast agregado")
     vistaPodcast();
 }
 
@@ -1662,6 +2084,48 @@ function letratoNum(letra){
     }
 }
 
+function publicarRola(){
+    let artista = usuarioLog.nombre;
+    let newArt = new Artista(artista, Math.floor(Math.random() * 25)+18, "GT")
+    arts.agregarArtista(newArt);
+    let nombre = document.getElementById("cancan").value;
+    let genero = document.getElementById("gengen").value;
+    let duracion = document.getElementById("duradura").value;
+    if(nombre == "" || genero == "" || duracion == ""){
+        alert("No puedes dejar campos vacios");
+        return;
+    }
+    let aux = new Cancion(nombre, artista, album, genero, duracion);
+    arts.agregarCancion(aux);
+    
+    nombre.value = "";
+    genero.value = "";
+    duracion.value = "";
+    alert("Agragada")
+    vistaArtistas();
+}
+
+function programarRola(){
+   
+    let mes = document.getElementById("meees").value;
+    let dia = document.getElementById("dayday").value;
+    let cancion = document.getElementById("cancan2").value;
+    let artist = usuarioLog.nombre;
+    if(mes == "" || dia == "" || cancion == ""){
+        alert("No puedes dejar campos vacios");
+        return;
+    }
+    MusicaProgramada.insertar(cancion, dia, mesNum(mes), artist);
+    mes.value = "";
+    dia.value = "";
+    cancion.value = "";
+    alert("Agragada")
+    graphvizdotPila();
+    vistaArtistas();
+
+}
+
+
 function alpha(){
     alert("chilero tu orden alphabetiko")
     console.log(arts);
@@ -1674,3 +2138,141 @@ function disalpha(){
     alert("chilero tu orden disalphabetiko")
 }
 
+function orden1(){
+    Pods.inOrdentoHtml();
+    vistaPodcast();
+
+}
+
+function orden2(){
+    Pods.preOrdentoHtml();
+    vistaPodcast();
+}
+
+function orden3(){
+    Pods.postOrdentoHtml();
+    vistaPodcast();
+}
+
+function graphvizdotPila(){
+    let dot = "digraph G { \r"
+    dot += "node [shape=record];\r"
+    dot += "rankdir=LR;\r"
+    dot += "node [style=filled];\r"
+    dot += "node [fillcolor=seashell2];\r"
+    dot += "node [color=black];\r"
+    dot += "edge [color=black];\r"
+    dot += "node [fontcolor=black];\r"
+    dot += usuarioLog.amix.dotpila();
+    dot += "}"
+    //graficar
+    d3.select("#graphAmix").graphviz()
+    .width(900)
+    .height(200)
+    .renderDot(dot);
+
+
+    console.log(dot)
+    console.log(usuarioLog.amix)
+}
+
+function graphvizdotCola(){
+    let dot = "digraph G { \r"
+    dot += "node [shape=record];\r"
+    dot += "rankdir=LR;\r"
+    dot += "node [style=filled];\r"
+    dot += "node [fillcolor=seashell2];\r"
+    dot += "node [color=black];\r"
+    dot += "edge [color=black];\r"
+    dot += "node [fontcolor=black];\r"
+    dot += usuarioLog.bloq.dotcola();
+    dot += "}"
+    //graficar
+    d3.select("#graphBloq").graphviz()
+    .width(900)
+    .height(200)
+    .renderDot(dot);
+
+}
+    
+function graphvizdotPlay(){
+    let dot = "digraph G { \r"
+    dot += "node [shape=record];\r"
+    dot += "edge[dir = \"both\"]"
+    dot += "rankdir=LR;\r"
+    dot += "node [style=filled];\r"
+    dot += "node [fillcolor=seashell2];\r"
+    dot += "node [color=black];\r"
+    dot += "edge [color=black];\r"
+    dot += "node [fontcolor=black];\r"
+    dot += usuarioLog.myplay.dotcircularDoble();
+    dot += "}"
+    //graficar
+    d3.select("#graphPlaylist").graphviz()
+    .width(900)
+    .height(200)
+    .renderDot(dot);
+
+}
+
+function graphvizMusica(){
+    var x = MusicaProgramada.graficar_matriz();
+    d3.select("#graphMusicaProgramada").graphviz()
+    .width(900)
+    .height(200)
+    .renderDot(x);
+
+}
+
+function grafica1(){
+    var x = users.dot();
+    d3.select("#graficaAdmon").graphviz()
+    .width(450)
+    .height(459)
+    .renderDot(x);
+
+
+}
+
+function grafica2(){
+    var x = arts.dot();
+    d3.select("#graficaAdmon").graphviz()
+    .width(450)
+    .height(459)
+    .renderDot(x);
+
+}
+
+function grafica3(){
+    var x = MusicaProgramada.graficar_matriz();
+    d3.select("#graficaAdmon").graphviz()
+    .width(450)
+    .height(459)
+    .renderDot(x);
+}
+
+function grafica4(){
+    var x = Pods.dot();
+    console.log("hola")
+    console.log(x)
+    console.log(Pods)
+    if(x == null){
+        alert("No hay nada que graficar")
+        return;
+    }
+
+    d3.select("#graficaAdmon").graphviz()
+    .width(450)
+    .height(549)
+    .renderDot(x);
+}
+
+function grafica5(){
+    var x = Pods.dot();
+    d3.select("#graficaAdmon").graphviz()
+    .width(450)
+    .height(459)
+    .renderDot(x);
+                
+}
+    

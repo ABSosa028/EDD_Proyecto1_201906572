@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
     <link type="text/css" rel="stylesheet" href="Css/magicscroll/magicscroll.css"/>
     <script type="text/javascript" src="Css/magicscroll/magicscroll.js"></script> 
+    <script src="d3.min.js"></script>
 
 </head>
 <div  id="uno">
@@ -264,9 +265,7 @@
                        <td>Carga Masiva</td>
                        <td>Graficas</td>
                        <td class="grafica"  rowspan="25">
-                           <button>descargar</button><br>
-                            grafica
-                            <br><br>
+                           <div id="graficaAdmon"></div>
                         </td>
                     </tr>
                     <tr>
@@ -288,7 +287,7 @@
                             </div>
                         </td>
                         <td>
-                            <button style="width: 100px;" id="gus" name="gus" type="button" class="btn btn-secondary btn-sm">Usuarios</button>
+                            <button style="width: 100px;" id="gus" onclick="grafica1()" name="gus" type="button" class="btn btn-secondary btn-sm">Usuarios</button>
                         </td>
                     </tr>
                     <tr>
@@ -304,7 +303,7 @@
                             </div>
                         </td>
                         <td>
-                            <button style="width: 100px;" id="gar" name="gar" type="button" class="btn btn-primary btn-sm">Artistas</button>
+                            <button style="width: 100px;" id="gar" name="gar" type="button" onclick="grafica2()" class="btn btn-primary btn-sm">Artistas</button>
                         </td>
                     </tr>
                     <tr>
@@ -320,7 +319,7 @@
                             </div>
                         </td>
                         <td>
-                            <button style="width: 100px;" id="gcan" name="gcan" type="button" class="btn btn-secondary btn-sm">Canciones</button>
+                            <button style="width: 100px;" id="gcan" name="gcan" type="button" onclick="grafica2()" class="btn btn-secondary btn-sm">Canciones</button>
                             
                         </td>
                     </tr>
@@ -337,7 +336,7 @@
                             </div>
                         </td>
                         <td>
-                            <button style="width: 100px;" id="gmp" name="gmp" type="button" class="btn btn-primary btn-sm">Musica Programada</button>
+                            <button style="width: 100px;" id="gmp" name="gmp" type="button" onclick="grafica3()" class="btn btn-primary btn-sm">Musica Programada</button>
                             
                         </td>
                     </tr>
@@ -354,7 +353,7 @@
                             </div>
                         </td>
                         <td>
-                            <button style="width: 100px;" id="gpod" name="gpod" type="button" class="btn btn-secondary btn-sm">Podcast</button>
+                            <button style="width: 100px;" id="gpod" name="gpod" type="button" onclick="grafica4()" class="btn btn-secondary btn-sm">Podcast</button>
                         </td>
                     </tr>
                 </table>
@@ -391,8 +390,6 @@
           <li class="nav-item">
             <a class="nav-link " aria-current="page"  onclick="vistaPodcast()">Podcast</a>
           </li>
-          
-          
         </ul>
         <span class="navbar-text">
           Muster Cloud
@@ -415,9 +412,21 @@
             
         </div>
         <div>
-          <input type="text" name="" id="" placeholder="Artista">
-          <input type="text" name="" id="" placeholder="Cancion">
-          <button>Publicar</button>
+          <input type="text" name="" id="duradura" placeholder="Duracion">
+          <input type="text" name="" id="gengen" placeholder="Genero">
+          <input type="text" name="" id="cancan" placeholder="Cancion">
+          <button class="btn btn-secondary" onclick="publicarRola()">Publicar Cancion</button>
+        </div>
+        <br>
+        <div>
+          <input type="text" name="" id="meees" placeholder="mes">
+          <input type="text" name="" id="dayday" placeholder="dia">
+          <input type="text" name="" id="cancan2" placeholder="Cancion">
+          <button class="btn btn-secondary" onclick="programarRola()">Programar Cancion</button>
+        </div>
+        <br>
+        <br><br><br><br>
+        <div id="graphMusica">
 
         </div>
 
@@ -475,6 +484,10 @@
 
         <div id="vistadetuplay"   style="width: 48rem;">
             
+        </div>
+        <br><br><br><br><br><br><br>
+        <div id="graphPlaylist">
+
         </div>
 
         
@@ -599,6 +612,10 @@
         <div>
           <button onclick="deleteFriend()" class="btn btn-primary" >Eliminar Amigo</button>
         </div>
+
+        <div id="graphAmix">
+
+        </div>
     </center>
 </body>
 </div>
@@ -656,6 +673,9 @@
         <div>
           <button onclick="deleteBlock()" class="btn btn-primary" >Eliminar Bloqueado</button>
         </div>
+        <br><br><br><br>
+        <div id="graphBloq">
+        </div>
     </center>
 </body>
 </div>
@@ -702,10 +722,19 @@
         <div >
                 <button onclick="mostraruno()" class="btn btn-danger logout" >Cerrar Sesión</button>
         </div>
+        <br>
     </div>
     <br>
     <p></p><br><br>
+
     <center>
+        <h3>Ordenamiento</h3>
+        <div>
+          <button onclick="orden1()" class="btn btn-secondary">InOrden</button>
+          <button onclick="orden2()" class="btn btn-secondary">PreOrden</button>
+          <button onclick="orden3()" class="btn btn-secondary">PostOrden</button>
+        </div>
+        <br>
         <div>
           Nombre
           <input type="text" name="" id="nombrePod">
@@ -715,15 +744,23 @@
           <input type="text" id="durapod">
           Invitados
           <input type="text" id="invitadospod">
-          <button class="btn btn-secondary" onclick="nuevoPod()">Publicar</button>
+          <button class="btn btn-secondary" onclick="nuevoPod()">Publicar Podcast</button>
         </div>
+        <br><br>
+      </center>
+      <center>
+        <br>
+        <br><br><br><p></p>
 
-        <div id="todoslospod">
-
+        <div id="vistadelosPodcast" style="border: 1px solid;">
+          
         </div>
-    </center>
+      </center>
 </body>
 </div>
 
-
+<script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>   
+    <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
+    <script type="text/javascript" src="./Listasimplegraficada.js"></script>
 </html>
